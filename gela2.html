@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gela 2 · Emakumeak Zientzian · dbSariak 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
+
+/* ── CONFIG: aldatu zure Apps Script URL-a ── */
+/* APPS_SCRIPT_URL aldagaia JSan dago behean    */
+
+:root {
+  --bg: #070b0f;
+  --surface: #0c1318;
+  --border: rgba(255,255,255,0.08);
+  --text: #e8edf5;
+  --muted: rgba(232,237,245,0.55);
+  --accent: #a855f7;       /* Gela 1: anberra */
+  --accent-dim: rgba(168,85,247,0.12);
+  --accent-glow: rgba(168,85,247,0.25);
+  --ok: #4ade80;
+  --err: #f43f5e;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* STARS */
+#sf{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.st{position:absolute;border-radius:50%;background:#fff;opacity:0;animation:tw var(--d,3s) var(--dl,0s) ease-in-out infinite;}
+@keyframes tw{0%,100%{opacity:0;}50%{opacity:var(--op,.5);}}
+
+.screen{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1rem;}
+.screen.hidden{display:none;}
+
+/* ── INTRO ── */
+#s-intro{gap:1.8rem;}
+.room-badge{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--accent);letter-spacing:.2em;text-transform:uppercase;border:1px solid var(--accent-glow);padding:5px 16px;border-radius:99px;background:var(--accent-dim);}
+.room-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,6vw,3.5rem);font-weight:700;color:#fff;text-align:center;line-height:1.1;}
+.room-title span{color:var(--accent);font-style:italic;}
+.room-desc{max-width:560px;text-align:center;font-size:1rem;line-height:1.8;color:var(--muted);background:rgba(255,255,255,0.04);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:1.2rem 1.6rem;}
+.room-desc strong{color:var(--accent);}
+
+.name-form{display:flex;flex-direction:column;gap:10px;align-items:center;width:100%;max-width:360px;}
+.name-input{width:100%;background:rgba(255,255,255,0.06);border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;font-family:'Space Grotesk',sans-serif;font-size:1rem;color:var(--text);outline:none;transition:border-color .2s;}
+.name-input:focus{border-color:var(--accent);}
+.name-input::placeholder{color:var(--muted);}
+.name-label{font-size:.82rem;color:var(--muted);align-self:flex-start;}
+
+.rules-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:560px;}
+.rule-chip{display:flex;align-items:center;gap:7px;padding:7px 13px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;font-size:.82rem;color:var(--muted);}
+.rule-chip strong{color:var(--text);}
+
+.btn-start{background:var(--accent);color:#060800;border:none;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:15px 48px;border-radius:8px;transition:transform .15s,box-shadow .15s;}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 6px 28px var(--accent-glow);}
+.btn-start:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+
+/* ── GAME ── */
+#s-game{justify-content:flex-start;padding:0;}
+#hud{width:100%;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:11px 22px;background:rgba(7,11,15,0.96);border-bottom:1px solid var(--border);backdrop-filter:blur(10px);gap:10px;position:sticky;top:0;z-index:10;}
+.hud-l{display:flex;align-items:center;gap:14px;}
+.hud-room{font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--accent);letter-spacing:.14em;text-transform:uppercase;}
+.hud-sub{font-size:.7rem;color:var(--muted);margin-top:1px;}
+.err-row{display:flex;gap:4px;}
+.edot{width:11px;height:11px;border-radius:50%;background:#c0392b;box-shadow:0 0 5px #c0392b;transition:all .3s;}
+.edot.used{background:#1a1a2e;box-shadow:none;border:1px solid var(--border);}
+.hud-c{text-align:center;}
+#timer{font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:700;color:var(--accent);letter-spacing:.1em;}
+#timer.danger{color:var(--err);animation:blink .6s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.35;}}
+.hud-r{display:flex;justify-content:flex-end;align-items:center;}
+.pts{font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--accent);}
+.pts small{font-size:.62rem;color:var(--muted);margin-right:3px;}
+#prog-wrap{width:100%;height:2px;background:var(--border);}
+#prog{height:100%;background:var(--accent);transition:width .4s ease;}
+#game-area{flex:1;width:100%;display:flex;align-items:center;justify-content:center;padding:20px 14px;}
+
+/* CARD */
+.q-card{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:16px;padding:26px 28px;max-width:720px;width:100%;display:flex;flex-direction:column;gap:18px;box-shadow:0 0 50px rgba(0,0,0,0.4);animation:cardIn .3s ease;}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.q-header{display:flex;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.q-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;background:var(--accent-dim);}
+.q-meta{font-family:'JetBrains Mono',monospace;font-size:.73rem;color:var(--accent);letter-spacing:.13em;text-transform:uppercase;}
+.q-num{font-size:.7rem;color:var(--muted);margin-top:2px;}
+.q-badge{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:.76rem;padding:4px 11px;border-radius:99px;border:1px solid var(--border);color:var(--muted);}
+.q-text{font-size:clamp(.93rem,1.7vw,1.08rem);line-height:1.75;color:var(--text);}
+.q-formula{font-family:'JetBrains Mono',monospace;font-size:1rem;text-align:center;padding:10px 18px;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.14);color:var(--accent);letter-spacing:.08em;}
+.q-opts{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.q-opt{background:rgba(255,255,255,0.04);border:1.5px solid var(--border);border-radius:11px;padding:13px 15px;color:var(--text);cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:.9rem;text-align:left;display:flex;align-items:flex-start;gap:9px;transition:all .15s;line-height:1.5;}
+.q-opt:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.22);transform:translateX(3px);}
+.q-opt .ok{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);min-width:16px;margin-top:2px;}
+.q-opt.correct{border-color:var(--ok);background:rgba(74,222,128,0.08);color:var(--ok);}
+.q-opt.wrong{border-color:var(--err);background:rgba(244,63,94,0.07);color:#f87171;}
+.q-fb{font-size:.88rem;line-height:1.65;padding:11px 15px;border-radius:8px;display:none;}
+.q-fb.show{display:block;}
+.q-fb.ok{background:rgba(74,222,128,0.08);border-left:3px solid var(--ok);color:#86efac;}
+.q-fb.err{background:rgba(244,63,94,0.08);border-left:3px solid var(--err);color:#fca5a5;}
+
+/* FAIL */
+#fail{position:fixed;inset:0;z-index:60;background:rgba(7,11,15,0.97);display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;backdrop-filter:blur(8px);}
+.fail-h{font-family:'Playfair Display',serif;font-size:2.6rem;font-weight:700;color:var(--err);animation:fp .9s infinite;}
+@keyframes fp{0%,100%{opacity:1;}50%{opacity:.5;}}
+.fail-sub{font-size:.93rem;color:var(--muted);max-width:400px;text-align:center;line-height:1.7;}
+.fail-btns{display:flex;gap:12px;margin-top:8px;}
+.fbtn{border:none;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:.88rem;font-weight:700;padding:11px 26px;border-radius:8px;letter-spacing:.05em;text-transform:uppercase;transition:transform .15s;}
+.fbtn:hover{transform:scale(1.03);}
+.fbtn.retry{background:var(--err);color:#fff;}
+.fbtn.menu{background:rgba(255,255,255,0.08);color:var(--text);border:1px solid rgba(255,255,255,0.18);}
+
+/* WIN */
+#s-win{gap:1.6rem;}
+.win-sparks{font-size:2.2rem;letter-spacing:8px;animation:hs 2s linear infinite;}
+@keyframes hs{from{filter:hue-rotate(0deg);}to{filter:hue-rotate(360deg);}}
+.win-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,5.5vw,3.2rem);font-weight:700;color:#fff;text-align:center;line-height:1.1;}
+.win-title span{color:var(--accent);}
+
+.code-reveal{background:var(--surface);border:2px solid var(--accent);border-radius:18px;padding:28px 48px;text-align:center;}
+.code-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;letter-spacing:.2em;color:var(--muted);margin-bottom:10px;text-transform:uppercase;}
+.code-number{font-family:'JetBrains Mono',monospace;font-size:5rem;font-weight:700;color:var(--accent);letter-spacing:8px;line-height:1;text-shadow:0 0 30px var(--accent-glow);}
+.code-hint{font-size:.85rem;color:var(--muted);margin-top:10px;}
+
+.time-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 40px;text-align:center;}
+.time-label{font-family:'JetBrains Mono',monospace;font-size:.76rem;letter-spacing:.18em;color:var(--muted);margin-bottom:6px;text-transform:uppercase;}
+.time-val{font-family:'JetBrains Mono',monospace;font-size:2.8rem;font-weight:700;color:var(--accent);letter-spacing:4px;}
+
+.win-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:360px;width:90%;}
+.wstat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;}
+.wstat-v{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--accent);}
+.wstat-l{font-size:.68rem;color:var(--muted);margin-top:2px;letter-spacing:.05em;}
+
+.saving-msg{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--muted);letter-spacing:.1em;}
+
+/* PARTICLES */
+.spk{position:fixed;pointer-events:none;z-index:400;border-radius:50%;animation:spkanim .7s ease-out forwards;}
+@keyframes spkanim{0%{opacity:1;transform:translate(0,0)scale(1);}100%{opacity:0;transform:translate(var(--tx),var(--ty))scale(0);}}
+.flt{position:fixed;pointer-events:none;z-index:401;font-family:'JetBrains Mono',monospace;font-weight:700;animation:fltanim 1.2s ease-out forwards;}
+@keyframes fltanim{0%{opacity:1;transform:translateY(0)scale(1);}100%{opacity:0;transform:translateY(-60px)scale(1.1);}}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+.shake{animation:shake .3s ease;}
+</style>
+</head>
+<body>
+<div id="sf"></div>
+
+<!-- INTRO -->
+<div id="s-intro" class="screen">
+  <div class="room-badge">XIII dbSariak · 2026 · Gela 2 / 4</div>
+  <h1 class="room-title">⚗️ <span>Emakumeak</span><br>Zientzian</h1>
+  <div class="room-desc">
+    <strong>⚠️ Kodea blokeatu da.</strong> Matematikako 5 galderari erantzun behar diozu ate hau irekitzeko. <strong>3 ondo erantzun</strong> behar dituzu gutxienez. Denbora kontatzen hasten da "Hasi" sakatzean.
+  </div>
+  <div class="rules-row">
+    <div class="rule-chip"><span>📝</span> <strong>5 galdera</strong></div>
+    <div class="rule-chip"><span>✅</span> Min. <strong>3 zuzen</strong></div>
+    <div class="rule-chip"><span>❌</span> Max. <strong>3 akats</strong></div>
+    <div class="rule-chip"><span>⏱️</span> <strong>Denbora kontatzen</strong></div>
+  </div>
+  <div class="name-form">
+    <label class="name-label">Taldearen izena (aukerakoa):</label>
+    <input class="name-input" id="team-name" type="text" placeholder="Adib: Talde Gorria" maxlength="30">
+  </div>
+  <button class="btn-start" onclick="startGame()">▶ Hasi</button>
+</div>
+
+<!-- GAME -->
+<div id="s-game" class="screen hidden">
+  <div id="hud">
+    <div class="hud-l">
+      <div>
+        <div class="hud-room">⚗️ Emakumeak Zientzian</div>
+        <div class="hud-sub" id="hud-sub">Galdera 1/5</div>
+      </div>
+      <div class="err-row">
+        <div class="edot" id="e0"></div>
+        <div class="edot" id="e1"></div>
+        <div class="edot" id="e2"></div>
+      </div>
+    </div>
+    <div class="hud-c"><div id="timer">00:00</div></div>
+    <div class="hud-r"><div class="pts"><small>✓ </small><span id="correct-count">0</span>/3</div></div>
+  </div>
+  <div id="prog-wrap"><div id="prog" style="width:0%"></div></div>
+  <div id="game-area"></div>
+</div>
+
+<!-- WIN -->
+<div id="s-win" class="screen hidden">
+  <div class="win-sparks">★✦★✦★</div>
+  <h2 class="win-title">Gela <span>irekita!</span></h2>
+  <div class="code-reveal">
+    <div class="code-label">Zure segurtasun-kodea</div>
+    <div class="code-number" id="win-code">?</div>
+    <div class="code-hint">Idatzi zenbaki hau! Azken pantailan beharko duzu.</div>
+  </div>
+  <div class="time-card">
+    <div class="time-label">Zure denbora</div>
+    <div class="time-val" id="win-time">00:00</div>
+  </div>
+  <div class="win-stats">
+    <div class="wstat"><div class="wstat-v" id="ws-ok">0</div><div class="wstat-l">Zuzen</div></div>
+    <div class="wstat"><div class="wstat-v" id="ws-err">0</div><div class="wstat-l">Akats</div></div>
+  </div>
+  <div class="saving-msg" id="saving-msg">⏳ Gordeta...</div>
+</div>
+
+<!-- FAIL -->
+<div id="fail">
+  <div style="font-size:3rem">💥</div>
+  <div class="fail-h">Sarraila blokeatu da!</div>
+  <div class="fail-sub">3 akats egin dituzu. Gela osoa berrabiarazi behar da.</div>
+  <div class="fail-btns">
+    <button class="fbtn retry" onclick="retryGame()">↺ Berrabiarazi</button>
+    <button class="fbtn menu" onclick="goIntro()">← Itzuli</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ══════════════════════════════
+//  ⚙️  KONFIGURAZIOA — aldatu!
+// ══════════════════════════════
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxc81SNB6Bx2xbdOQqI_AnS-UlS5wdvhA_Cv0ZvNDcYYXBKRRgrHZxJCHB-6Xvl1NXL/exec';
+const ROOM_NUMBER = 2;
+const ROOM_COLOR  = '#a855f7';
+
+// ── Stars ──
+(function(){
+  const sf=document.getElementById('sf');
+  for(let i=0;i<100;i++){
+    const s=document.createElement('div');s.className='st';
+    const z=Math.random()*2+0.5;
+    s.style.cssText=`width:${z}px;height:${z}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${(Math.random()*4+2).toFixed(1)}s;--dl:${(Math.random()*5).toFixed(1)}s;--op:${(Math.random()*0.5+0.2).toFixed(2)};`;
+    sf.appendChild(s);
+  }
+})();
+
+// ── Questions ──
+const QUESTIONS = [
+  {
+    text: 'Marie Curie bi Nobel sari irabazi zituen lehen pertsona izan zen. Zein diziplinatan?',
+    formula: null,
+    options: ['Fisika eta Kimika','Kimika eta Medikuntza','Fisika eta Matematika','Biologia eta Fisika'],
+    correct: 0,
+    explain: 'Marie Curie Fisikako Nobel Saria 1903an eta Kimikakoa 1911n irabazi zituen.'
+  },
+  {
+    text: 'Hedy Lamarr aktorea eta zientzialariak zein teknologiaren oinarria patentatu zuen 1942an?',
+    formula: null,
+    options: ['Telefono mugikorra','Frekuentzia-jauzko komunikazioa (WiFi/Bluetooth oinarria)','Ordenagailuen prozesadorea','Laser teknologia'],
+    correct: 1,
+    explain: 'Hedy Lamarr-ek frekuentzia-jauzko komunikazioa patentatu zuen. Gaur eguneko WiFi eta Bluetooth-aren oinarria da!'
+  },
+  {
+    text: 'Katherine Johnson-en kalkuluak zein NASA misiotan izan ziren erabakigarriak?',
+    formula: null,
+    options: ['Hubble teleskopioa','Voyager 1','Apollo 11 Ilargiaren misioa','ISS eraikipen-misioa'],
+    correct: 2,
+    explain: 'Katherine Johnson-en kalkuluak Apollo 11 Ilargiaren misioan (1969) funtsezko izan ziren.'
+  },
+  {
+    text: 'Rosalind Franklin-en "Foto 51" argazkiak zer frogatu zuen?',
+    formula: null,
+    options: ['DNAren sekuentzia osoa','Proteinen egitura','DNA helize bikoitzaren egitura','RNAren aurkikuntza'],
+    correct: 2,
+    explain: 'Foto 51 X-izpien difrakzio-irudiak DNA helize bikoitzaren egitura frogatu zuen.'
+  },
+  {
+    text: 'Ada Lovelace historian lehen programatzailetzat hartzen da. Zein makinarentzat idatzi zuen bere programa?',
+    formula: null,
+    options: ['ENIAC ordenagailua','Difference Engine','Analytical Engine','Mark I'],
+    correct: 2,
+    explain: 'Ada Lovelacek Charles Babbage-ren Analytical Engine-rentzat idatzi zuen munduko lehen algoritmo konputazionala, 1842an.'
+  }
+];
+
+// ── State ──
+let qIdx=0, errors=0, totalErrors=0, correctCount=0;
+let answered=false;
+let timerInt=null, startTime=0, elapsedSec=0;
+let teamName='';
+let currentCorrectIdx=null;
+
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+function fmtTime(s){return Math.floor(s/60).toString().padStart(2,'0')+':'+(s%60).toString().padStart(2,'0');}
+
+// ── Timer ──
+function startTimer(){
+  startTime=Date.now()-elapsedSec*1000;
+  timerInt=setInterval(()=>{
+    elapsedSec=Math.floor((Date.now()-startTime)/1000);
+    const el=document.getElementById('timer');
+    el.textContent=fmtTime(elapsedSec);
+    el.className=elapsedSec>300?'danger':'';
+  },500);
+}
+function stopTimer(){clearInterval(timerInt);}
+
+// ── Nav ──
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+function goIntro(){stopTimer();showScreen('s-intro');document.getElementById('fail').style.display='none';}
+
+function startGame(){
+  teamName=document.getElementById('team-name').value.trim()||'Taldea';
+  qIdx=0;errors=0;totalErrors=0;correctCount=0;elapsedSec=0;
+  showScreen('s-game');
+  startTimer();
+  renderQ();
+}
+function retryGame(){
+  document.getElementById('fail').style.display='none';
+  qIdx=0;errors=0;correctCount=0;elapsedSec=0;
+  startTimer();
+  renderQ();
+}
+
+// ── Render ──
+function renderQ(){
+  answered=false;
+  document.getElementById('hud-sub').textContent=`Galdera ${qIdx+1}/5`;
+  document.getElementById('correct-count').textContent=correctCount;
+  document.getElementById('prog').style.width=(qIdx/5*100)+'%';
+  for(let i=0;i<3;i++) document.getElementById('e'+i).className='edot'+(i<errors?' used':'');
+
+  const q=QUESTIONS[qIdx];
+  const correctText=q.options[q.correct];
+  const shuffled=shuffle(q.options.map(t=>({t})));
+  currentCorrectIdx=shuffled.findIndex(o=>o.t===correctText);
+
+  const fml=q.formula?`<div class="q-formula">${q.formula}</div>`:'';
+  const opts=shuffled.map((o,i)=>`
+    <button class="q-opt" id="opt${i}" onclick="answer(${i},this)">
+      <span class="ok">${String.fromCharCode(65+i)}</span>${o.t}
+    </button>`).join('');
+
+  document.getElementById('game-area').innerHTML=`
+    <div class="q-card">
+      <div class="q-header">
+        <div class="q-icon">⚗️</div>
+        <div>
+          <div class="q-meta">Emakumeak Zientzian</div>
+          <div class="q-num">Galdera ${qIdx+1} / 5 · Min. 3 zuzen</div>
+        </div>
+        <div class="q-badge">${correctCount}/3 ✓</div>
+      </div>
+      <div class="q-text">${q.text}</div>
+      ${fml}
+      <div class="q-opts">${opts}</div>
+      <div class="q-fb" id="q-fb"></div>
+    </div>`;
+}
+
+// ── Answer ──
+function answer(idx,btn){
+  if(answered)return;
+  answered=true;
+  const q=QUESTIONS[qIdx];
+  document.querySelectorAll('.q-opt').forEach(b=>b.style.pointerEvents='none');
+  const fb=document.getElementById('q-fb');
+  const r=btn.getBoundingClientRect();
+  const bx=r.left+r.width/2,by=r.top+r.height/2;
+
+  if(idx===currentCorrectIdx){
+    btn.classList.add('correct');
+    fb.textContent='✓ '+q.explain; fb.className='q-fb show ok';
+    sparks(bx,by,ROOM_COLOR,10);
+    correctCount++;
+    document.getElementById('correct-count').textContent=correctCount;
+    if(correctCount>=3){setTimeout(winGame,1400);}
+    else {setTimeout(nextQ,1400);}
+  } else {
+    btn.classList.add('wrong');
+    document.getElementById('opt'+currentCorrectIdx).classList.add('correct');
+    fb.textContent='✗ '+q.explain; fb.className='q-fb show err';
+    sparks(bx,by,'#f43f5e',8);
+    errors++; totalErrors++;
+    for(let i=0;i<3;i++) document.getElementById('e'+i).className='edot'+(i<errors?' used':'');
+    if(errors>=3){stopTimer();setTimeout(showFail,1600);}
+    else {setTimeout(nextQ,1800);}
+  }
+}
+
+function nextQ(){
+  qIdx++;
+  if(qIdx>=QUESTIONS.length){
+    // 5 galdera agortu, 3 zuzen lortu gabe
+    if(correctCount>=3) winGame();
+    else {stopTimer();showFail();}
+  } else renderQ();
+}
+
+function showFail(){
+  document.getElementById('fail').style.display='flex';
+  document.getElementById('s-game').classList.add('shake');
+  setTimeout(()=>document.getElementById('s-game').classList.remove('shake'),300);
+}
+
+// ── Win ──
+function winGame(){
+  stopTimer();
+  showScreen('s-win');
+  document.getElementById('ws-ok').textContent=correctCount;
+  document.getElementById('ws-err').textContent=totalErrors;
+  document.getElementById('win-time').textContent=fmtTime(elapsedSec);
+
+  // Sparkak
+  for(let i=0;i<4;i++) setTimeout(()=>sparks(
+    Math.random()*window.innerWidth, Math.random()*window.innerHeight*.5,
+    ROOM_COLOR, 14), i*250);
+
+  // Apps Script-era bidali
+  saveResult();
+}
+
+async function saveResult(){
+  const msg=document.getElementById('saving-msg');
+  msg.textContent='⏳ Emaitza gordetzen...';
+  try {
+    const res=await fetch(APPS_SCRIPT_URL,{
+      method:'POST',
+      body: JSON.stringify({
+        room: ROOM_NUMBER,
+        teamName: teamName,
+        seconds: elapsedSec
+      })
+    });
+    const data=await res.json();
+    if(data.ok){
+      document.getElementById('win-code').textContent=data.code;
+      msg.textContent='✓ Gordeta! Zure kodea: '+data.code;
+      // Sparkak kode zenbakiaren gainean
+      const codeEl=document.getElementById('win-code');
+      const r=codeEl.getBoundingClientRect();
+      sparks(r.left+r.width/2,r.top+r.height/2,ROOM_COLOR,20);
+    } else {
+      msg.textContent='⚠️ Errorea gordetzean. Kodea: ?';
+    }
+  } catch(e) {
+    msg.textContent='⚠️ Konexio errorea. Erakuts emaitza manualkiro.';
+    console.error(e);
+  }
+}
+
+// ── Particles ──
+function sparks(x,y,color,n=8){
+  for(let i=0;i<n;i++){
+    const el=document.createElement('div');el.className='spk';
+    const sz=Math.random()*8+3,ang=Math.random()*Math.PI*2,d=Math.random()*90+25;
+    el.style.cssText=`width:${sz}px;height:${sz}px;background:${color};left:${x}px;top:${y}px;--tx:${Math.cos(ang)*d}px;--ty:${Math.sin(ang)*d}px;animation-duration:${Math.random()*.4+.5}s;`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),900);
+  }
+}
+</script>
+</body>
+</html>

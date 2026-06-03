@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XIII dbSariak · Emaitzak · Don Bosco LHII</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
+
+:root {
+  --bg: #070b0f;
+  --surface: #0c1318;
+  --border: rgba(255,255,255,0.08);
+  --text: #e8edf5;
+  --muted: rgba(232,237,245,0.5);
+  --c1: #e8c44a;
+  --c2: #a855f7;
+  --c3: #4ade80;
+  --c4: #f97316;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+#sf{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.st{position:absolute;border-radius:50%;background:#fff;opacity:0;animation:tw var(--d,3s) var(--dl,0s) ease-in-out infinite;}
+@keyframes tw{0%,100%{opacity:0;}50%{opacity:var(--op,.5);}}
+
+.wrap{position:relative;z-index:2;max-width:860px;margin:0 auto;padding:2.5rem 1.5rem;}
+
+/* HEADER */
+.header{text-align:center;margin-bottom:2.5rem;}
+.ev-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:#4ac9e8;letter-spacing:.2em;text-transform:uppercase;border:1px solid rgba(74,201,232,0.3);padding:5px 16px;border-radius:99px;background:rgba(74,201,232,0.06);margin-bottom:1rem;}
+.ev-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:700;color:#fff;line-height:1.1;margin-bottom:.5rem;}
+.ev-title span{color:#4ac9e8;font-style:italic;}
+.ev-sub{font-size:.95rem;color:var(--muted);}
+
+/* STATUS BAR */
+#status-bar{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:2rem;padding:10px 20px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--muted);}
+#status-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+/* ROOMS GRID */
+.rooms-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:2rem;}
+@media(max-width:520px){.rooms-grid{grid-template-columns:1fr;}}
+
+.room-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;transition:border-color .3s;}
+.room-card.done{border-color:var(--room-c);}
+.room-card-top{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.room-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--room-c);}
+.room-icon{font-size:1.4rem;}
+.room-name{font-size:.9rem;color:var(--muted);}
+.room-status{margin-left:auto;font-size:1.2rem;}
+
+.room-time-row{display:flex;align-items:baseline;gap:8px;}
+.room-time{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;color:var(--room-c);}
+.room-time.waiting{color:var(--border);font-size:1.4rem;}
+.room-time-lbl{font-size:.72rem;color:var(--muted);}
+
+.room-team{font-size:.78rem;color:var(--muted);margin-top:6px;}
+
+/* KANDADU */
+.lock-section{background:var(--surface);border:2px solid rgba(255,255,255,0.1);border-radius:18px;padding:28px;margin-bottom:2rem;text-align:center;}
+.lock-section.unlocked{border-color:#4ade80;}
+.lock-label{font-family:'JetBrains Mono',monospace;font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.lock-digits{display:flex;gap:12px;justify-content:center;margin-bottom:14px;}
+.digit-box{width:64px;height:80px;background:rgba(255,255,255,0.04);border:2px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:2.8rem;font-weight:700;transition:all .4s;}
+.digit-box.filled{background:rgba(255,255,255,0.08);}
+.digit-box.d1.filled{color:var(--c1);border-color:var(--c1);}
+.digit-box.d2.filled{color:var(--c2);border-color:var(--c2);}
+.digit-box.d3.filled{color:var(--c3);border-color:var(--c3);}
+.digit-box.d4.filled{color:var(--c4);border-color:var(--c4);}
+.lock-hint{font-size:.85rem;color:var(--muted);}
+.lock-open{font-size:1rem;color:#4ade80;margin-top:8px;}
+
+/* DENBORA TOTALA */
+.total-section{background:var(--surface);border:1px solid rgba(74,201,232,0.25);border-radius:16px;padding:24px;text-align:center;margin-bottom:2rem;}
+.total-label{font-family:'JetBrains Mono',monospace;font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.total-time{font-family:'JetBrains Mono',monospace;font-size:3.5rem;font-weight:700;color:#4ac9e8;letter-spacing:6px;}
+.total-time.waiting{color:rgba(74,201,232,0.2);font-size:2rem;}
+
+/* REFRESH */
+.refresh-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:1rem;}
+.btn-refresh{background:transparent;border:1.5px solid var(--border);color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:.85rem;padding:9px 22px;border-radius:8px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:7px;}
+.btn-refresh:hover{border-color:rgba(255,255,255,0.3);color:var(--text);}
+.auto-badge{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.1em;}
+
+/* FOOTER */
+footer{text-align:center;padding:1.5rem 0;font-size:.78rem;color:rgba(255,255,255,0.25);border-top:1px solid var(--border);margin-top:1rem;}
+
+@keyframes countUp{from{transform:scale(1.3);opacity:0;}to{transform:scale(1);opacity:1;}}
+.digit-box.animate{animation:countUp .4s cubic-bezier(0.34,1.56,0.64,1);}
+</style>
+</head>
+<body>
+<div id="sf"></div>
+
+<div class="wrap">
+  <div class="header">
+    <div class="ev-badge">XIII dbSariak · CIFP Don Bosco LHII · 2026</div>
+    <h1 class="ev-title">STEEAM <span>Escape Room</span></h1>
+    <p class="ev-sub">Emaitzen pantaila nagusia</p>
+  </div>
+
+  <div id="status-bar">
+    <div id="status-dot"></div>
+    <span id="status-txt">Emaitzak kargatzen...</span>
+  </div>
+
+  <!-- 4 GELEN TXARTELAK -->
+  <div class="rooms-grid">
+    <div class="room-card" id="card-1" style="--room-c:var(--c1)">
+      <div class="room-card-top">
+        <div>
+          <div class="room-num">Gela 1</div>
+          <div class="room-name">📐 Matematika</div>
+        </div>
+        <div class="room-status" id="status-1">⏳</div>
+      </div>
+      <div class="room-time-row">
+        <div class="room-time waiting" id="time-1">--:--</div>
+        <div class="room-time-lbl" id="timelbl-1"></div>
+      </div>
+      <div class="room-team" id="team-1"></div>
+    </div>
+
+    <div class="room-card" id="card-2" style="--room-c:var(--c2)">
+      <div class="room-card-top">
+        <div>
+          <div class="room-num">Gela 2</div>
+          <div class="room-name">⚗️ Emakumeak Zientzian</div>
+        </div>
+        <div class="room-status" id="status-2">⏳</div>
+      </div>
+      <div class="room-time-row">
+        <div class="room-time waiting" id="time-2">--:--</div>
+        <div class="room-time-lbl" id="timelbl-2"></div>
+      </div>
+      <div class="room-team" id="team-2"></div>
+    </div>
+
+    <div class="room-card" id="card-3" style="--room-c:var(--c3)">
+      <div class="room-card-top">
+        <div>
+          <div class="room-num">Gela 3</div>
+          <div class="room-name">🌱 Ingurumena</div>
+        </div>
+        <div class="room-status" id="status-3">⏳</div>
+      </div>
+      <div class="room-time-row">
+        <div class="room-time waiting" id="time-3">--:--</div>
+        <div class="room-time-lbl" id="timelbl-3"></div>
+      </div>
+      <div class="room-team" id="team-3"></div>
+    </div>
+
+    <div class="room-card" id="card-4" style="--room-c:var(--c4)">
+      <div class="room-card-top">
+        <div>
+          <div class="room-num">Gela 4</div>
+          <div class="room-name">🤖 Robotika</div>
+        </div>
+        <div class="room-status" id="status-4">⏳</div>
+      </div>
+      <div class="room-time-row">
+        <div class="room-time waiting" id="time-4">--:--</div>
+        <div class="room-time-lbl" id="timelbl-4"></div>
+      </div>
+      <div class="room-team" id="team-4"></div>
+    </div>
+  </div>
+
+  <!-- KANDADUA -->
+  <div class="lock-section" id="lock-section">
+    <div class="lock-label">🔒 4 Digituko Kandadu-kodea</div>
+    <div class="lock-digits">
+      <div class="digit-box d1" id="dig-1">?</div>
+      <div class="digit-box d2" id="dig-2">?</div>
+      <div class="digit-box d3" id="dig-3">?</div>
+      <div class="digit-box d4" id="dig-4">?</div>
+    </div>
+    <div class="lock-hint" id="lock-hint">Gela guztiak osatu ondoren agertuko da kodea.</div>
+    <div class="lock-open hidden" id="lock-open">🔓 Kandadua irekita! Sartu kodea eta atera!</div>
+  </div>
+
+  <!-- DENBORA TOTALA -->
+  <div class="total-section">
+    <div class="total-label">⏱ Denbora totala (4 gelak)</div>
+    <div class="total-time waiting" id="total-time">--:--</div>
+  </div>
+
+  <div class="refresh-row">
+    <button class="btn-refresh" onclick="loadResults()">↺ Freskatu</button>
+    <span class="auto-badge" id="auto-badge">Auto: 10s...</span>
+  </div>
+</div>
+
+<footer>CIFP Don Bosco LHII · Errenteria · XIII dbSariak 2026</footer>
+
+<script>
+'use strict';
+
+// ══════════════════════════════
+//  ⚙️  KONFIGURAZIOA — aldatu!
+// ══════════════════════════════
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxc81SNB6Bx2xbdOQqI_AnS-UlS5wdvhA_Cv0ZvNDcYYXBKRRgrHZxJCHB-6Xvl1NXL/exec';
+const AUTO_REFRESH_SEC = 10;
+
+// Stars
+(function(){
+  const sf=document.getElementById('sf');
+  for(let i=0;i<100;i++){
+    const s=document.createElement('div');s.className='st';
+    const z=Math.random()*2+0.5;
+    s.style.cssText=`width:${z}px;height:${z}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${(Math.random()*4+2).toFixed(1)}s;--dl:${(Math.random()*5).toFixed(1)}s;--op:${(Math.random()*0.5+0.2).toFixed(2)};`;
+    sf.appendChild(s);
+  }
+})();
+
+function fmtTime(s){return Math.floor(s/60).toString().padStart(2,'0')+':'+(s%60).toString().padStart(2,'0');}
+
+let autoInterval=null;
+let countdown=AUTO_REFRESH_SEC;
+
+function startAutoRefresh(){
+  clearInterval(autoInterval);
+  countdown=AUTO_REFRESH_SEC;
+  autoInterval=setInterval(()=>{
+    countdown--;
+    document.getElementById('auto-badge').textContent=`Auto: ${countdown}s...`;
+    if(countdown<=0){loadResults();}
+  },1000);
+}
+
+async function loadResults(){
+  clearInterval(autoInterval);
+  document.getElementById('status-txt').textContent='Datuak kargatzen...';
+  document.getElementById('status-dot').style.background='#e8c44a';
+
+  try {
+    const res = await fetch(APPS_SCRIPT_URL+'?action=results');
+    const data = await res.json();
+    renderResults(data);
+    document.getElementById('status-txt').textContent='Azken eguneratzea: '+new Date().toLocaleTimeString('eu-ES');
+    document.getElementById('status-dot').style.background='#4ade80';
+  } catch(e) {
+    document.getElementById('status-txt').textContent='⚠️ Konexio errorea — freskatzen saiatzen...';
+    document.getElementById('status-dot').style.background='#f43f5e';
+  }
+  startAutoRefresh();
+}
+
+function renderResults(data){
+  const rooms = data.rooms || [null,null,null,null];
+
+  rooms.forEach((r,i)=>{
+    const n=i+1;
+    const timeEl=document.getElementById('time-'+n);
+    const statusEl=document.getElementById('status-'+n);
+    const teamEl=document.getElementById('team-'+n);
+    const card=document.getElementById('card-'+n);
+
+    if(r){
+      const prev=timeEl.textContent;
+      timeEl.textContent=r.time;
+      timeEl.className='room-time';
+      if(prev!==r.time) timeEl.style.animation='none',setTimeout(()=>timeEl.style.animation='',10);
+      statusEl.textContent='✅';
+      teamEl.textContent=r.teamName||'';
+      card.classList.add('done');
+    } else {
+      timeEl.textContent='--:--';
+      timeEl.className='room-time waiting';
+      statusEl.textContent='⏳';
+      teamEl.textContent='';
+      card.classList.remove('done');
+    }
+  });
+
+  // Kandadua
+  rooms.forEach((r,i)=>{
+    const dbox=document.getElementById('dig-'+(i+1));
+    if(r && r.code){
+      if(dbox.textContent!==r.code){
+        dbox.textContent=r.code;
+        dbox.classList.add('filled','animate');
+        setTimeout(()=>dbox.classList.remove('animate'),500);
+      }
+    } else {
+      dbox.textContent='?';
+      dbox.classList.remove('filled');
+    }
+  });
+
+  if(data.complete){
+    document.getElementById('lock-section').classList.add('unlocked');
+    document.getElementById('lock-hint').classList.add('hidden');
+    document.getElementById('lock-open').classList.remove('hidden');
+
+    const tt=document.getElementById('total-time');
+    tt.textContent=data.totalTime||'--:--';
+    tt.className='total-time';
+  } else {
+    document.getElementById('lock-section').classList.remove('unlocked');
+    document.getElementById('lock-hint').classList.remove('hidden');
+    document.getElementById('lock-open').classList.add('hidden');
+    document.getElementById('total-time').textContent='--:--';
+    document.getElementById('total-time').className='total-time waiting';
+  }
+}
+
+// CSS hidden class
+document.head.insertAdjacentHTML('beforeend','<style>.hidden{display:none!important;}</style>');
+
+// Hasi
+loadResults();
+</script>
+</body>
+</html>
