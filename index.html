@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>XIII dbSariak · Emaitzak · Don Bosco LHII</title>
+<title>XIII dbSariak · Escape Room · Don Bosco LHII</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
 
@@ -17,14 +17,17 @@
   --c2: #a855f7;
   --c3: #4ade80;
   --c4: #f97316;
+  --ok: #4ade80;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* STARS */
 #sf{position:fixed;inset:0;z-index:0;pointer-events:none;}
 .st{position:absolute;border-radius:50%;background:#fff;opacity:0;animation:tw var(--d,3s) var(--dl,0s) ease-in-out infinite;}
 @keyframes tw{0%,100%{opacity:0;}50%{opacity:var(--op,.5);}}
 
-.wrap{position:relative;z-index:2;max-width:860px;margin:0 auto;padding:2.5rem 1.5rem;}
+.wrap{position:relative;z-index:2;max-width:820px;margin:0 auto;padding:2.5rem 1.5rem 4rem;}
 
 /* HEADER */
 .header{text-align:center;margin-bottom:2.5rem;}
@@ -33,61 +36,87 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 .ev-title span{color:#4ac9e8;font-style:italic;}
 .ev-sub{font-size:.95rem;color:var(--muted);}
 
-/* STATUS BAR */
-#status-bar{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:2rem;padding:10px 20px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--muted);}
-#status-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
+/* TABS */
+.tabs{display:flex;gap:8px;margin-bottom:1.8rem;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:5px;}
+.tab{flex:1;padding:10px;border:none;background:transparent;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:.88rem;font-weight:500;border-radius:8px;cursor:pointer;transition:all .2s;}
+.tab.active{background:var(--surface);color:var(--text);box-shadow:0 1px 8px rgba(0,0,0,0.3);}
+
+/* PANEL */
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* ── TAB 1: DENBORAK ── */
+.rooms-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:1.5rem;}
+@media(max-width:500px){.rooms-grid{grid-template-columns:1fr;}}
+
+.room-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;transition:border-color .4s;}
+.room-card.done{border-color:var(--rc);}
+.rc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.rc-label{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--rc);}
+.rc-status{font-size:1.1rem;}
+.rc-name{font-size:.85rem;color:var(--muted);margin-bottom:10px;}
+.rc-time{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;color:var(--rc);letter-spacing:2px;}
+.rc-time.wait{color:rgba(255,255,255,0.12);font-size:1.4rem;}
+.rc-team{font-size:.75rem;color:var(--muted);margin-top:5px;}
+
+.total-box{background:var(--surface);border:1px solid rgba(74,201,232,0.25);border-radius:14px;padding:20px;text-align:center;margin-bottom:1.2rem;}
+.total-lbl{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.total-val{font-family:'JetBrains Mono',monospace;font-size:3rem;font-weight:700;color:#4ac9e8;letter-spacing:4px;}
+.total-val.wait{color:rgba(74,201,232,0.18);font-size:1.8rem;}
+
+.refresh-row{display:flex;align-items:center;justify-content:center;gap:10px;}
+.btn-refresh{background:transparent;border:1.5px solid var(--border);color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:.82rem;padding:8px 20px;border-radius:8px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;}
+.btn-refresh:hover{border-color:rgba(255,255,255,0.25);color:var(--text);}
+.auto-lbl{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);}
+
+/* STATUS */
+#status-bar{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:1.5rem;padding:9px 18px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--muted);}
+#sdot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 
-/* ROOMS GRID */
-.rooms-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:2rem;}
-@media(max-width:520px){.rooms-grid{grid-template-columns:1fr;}}
+/* ── TAB 2: KANDADUA ── */
+.lock-intro{text-align:center;margin-bottom:2rem;}
+.lock-intro h2{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:#fff;margin-bottom:.5rem;}
+.lock-intro p{font-size:.95rem;color:var(--muted);line-height:1.7;}
 
-.room-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;transition:border-color .3s;}
-.room-card.done{border-color:var(--room-c);}
-.room-card-top{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
-.room-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--room-c);}
-.room-icon{font-size:1.4rem;}
-.room-name{font-size:.9rem;color:var(--muted);}
-.room-status{margin-left:auto;font-size:1.2rem;}
+.digit-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:420px;margin:0 auto 2rem;}
+.digit-group{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.digit-label{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px;}
+.digit-label.l1{color:var(--c1);}
+.digit-label.l2{color:var(--c2);}
+.digit-label.l3{color:var(--c3);}
+.digit-label.l4{color:var(--c4);}
+.digit-input{width:100%;height:72px;background:rgba(255,255,255,0.05);border:2px solid var(--border);border-radius:12px;font-family:'JetBrains Mono',monospace;font-size:2.4rem;font-weight:700;text-align:center;color:var(--text);outline:none;transition:all .2s;-moz-appearance:textfield;}
+.digit-input::-webkit-outer-spin-button,
+.digit-input::-webkit-inner-spin-button{-webkit-appearance:none;}
+.digit-input:focus{border-color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.08);}
+.digit-input.d1:focus{border-color:var(--c1);}
+.digit-input.d2:focus{border-color:var(--c2);}
+.digit-input.d3:focus{border-color:var(--c3);}
+.digit-input.d4:focus{border-color:var(--c4);}
+.digit-input.correct{border-color:var(--ok);background:rgba(74,222,128,0.08);color:var(--ok);}
+.digit-input.wrong{border-color:#f43f5e;background:rgba(244,63,94,0.07);animation:shake .3s ease;}
 
-.room-time-row{display:flex;align-items:baseline;gap:8px;}
-.room-time{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;color:var(--room-c);}
-.room-time.waiting{color:var(--border);font-size:1.4rem;}
-.room-time-lbl{font-size:.72rem;color:var(--muted);}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
 
-.room-team{font-size:.78rem;color:var(--muted);margin-top:6px;}
+.btn-unlock{display:block;width:100%;max-width:320px;margin:0 auto 1.5rem;background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.15);color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;padding:15px;border-radius:10px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:all .2s;}
+.btn-unlock:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.3);}
 
-/* KANDADU */
-.lock-section{background:var(--surface);border:2px solid rgba(255,255,255,0.1);border-radius:18px;padding:28px;margin-bottom:2rem;text-align:center;}
-.lock-section.unlocked{border-color:#4ade80;}
-.lock-label{font-family:'JetBrains Mono',monospace;font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
-.lock-digits{display:flex;gap:12px;justify-content:center;margin-bottom:14px;}
-.digit-box{width:64px;height:80px;background:rgba(255,255,255,0.04);border:2px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:2.8rem;font-weight:700;transition:all .4s;}
-.digit-box.filled{background:rgba(255,255,255,0.08);}
-.digit-box.d1.filled{color:var(--c1);border-color:var(--c1);}
-.digit-box.d2.filled{color:var(--c2);border-color:var(--c2);}
-.digit-box.d3.filled{color:var(--c3);border-color:var(--c3);}
-.digit-box.d4.filled{color:var(--c4);border-color:var(--c4);}
-.lock-hint{font-size:.85rem;color:var(--muted);}
-.lock-open{font-size:1rem;color:#4ade80;margin-top:8px;}
+/* RESULT */
+.lock-result{text-align:center;padding:2rem;border-radius:16px;display:none;}
+.lock-result.show{display:block;}
+.lock-result.ok{background:rgba(74,222,128,0.08);border:2px solid var(--ok);}
+.lock-result.fail{background:rgba(244,63,94,0.07);border:2px solid #f43f5e;}
+.lr-icon{font-size:3.5rem;margin-bottom:.8rem;}
+.lr-title{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;margin-bottom:.5rem;}
+.lr-title.ok{color:var(--ok);}
+.lr-title.fail{color:#f43f5e;}
+.lr-sub{font-size:.95rem;color:var(--muted);line-height:1.7;}
+.lr-time{font-family:'JetBrains Mono',monospace;font-size:2.5rem;font-weight:700;color:#4ac9e8;margin-top:1rem;letter-spacing:4px;}
 
-/* DENBORA TOTALA */
-.total-section{background:var(--surface);border:1px solid rgba(74,201,232,0.25);border-radius:16px;padding:24px;text-align:center;margin-bottom:2rem;}
-.total-label{font-family:'JetBrains Mono',monospace;font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
-.total-time{font-family:'JetBrains Mono',monospace;font-size:3.5rem;font-weight:700;color:#4ac9e8;letter-spacing:6px;}
-.total-time.waiting{color:rgba(74,201,232,0.2);font-size:2rem;}
-
-/* REFRESH */
-.refresh-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:1rem;}
-.btn-refresh{background:transparent;border:1.5px solid var(--border);color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:.85rem;padding:9px 22px;border-radius:8px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:7px;}
-.btn-refresh:hover{border-color:rgba(255,255,255,0.3);color:var(--text);}
-.auto-badge{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.1em;}
-
-/* FOOTER */
-footer{text-align:center;padding:1.5rem 0;font-size:.78rem;color:rgba(255,255,255,0.25);border-top:1px solid var(--border);margin-top:1rem;}
-
-@keyframes countUp{from{transform:scale(1.3);opacity:0;}to{transform:scale(1);opacity:1;}}
-.digit-box.animate{animation:countUp .4s cubic-bezier(0.34,1.56,0.64,1);}
+/* PARTICLES */
+.spk{position:fixed;pointer-events:none;z-index:400;border-radius:50%;animation:spka .7s ease-out forwards;}
+@keyframes spka{0%{opacity:1;transform:translate(0,0)scale(1);}100%{opacity:0;transform:translate(var(--tx),var(--ty))scale(0);}}
 </style>
 </head>
 <body>
@@ -97,112 +126,100 @@ footer{text-align:center;padding:1.5rem 0;font-size:.78rem;color:rgba(255,255,25
   <div class="header">
     <div class="ev-badge">XIII dbSariak · CIFP Don Bosco LHII · 2026</div>
     <h1 class="ev-title">STEEAM <span>Escape Room</span></h1>
-    <p class="ev-sub">Emaitzen pantaila nagusia</p>
+    <p class="ev-sub">Pantaila nagusia</p>
   </div>
 
   <div id="status-bar">
-    <div id="status-dot"></div>
-    <span id="status-txt">Emaitzak kargatzen...</span>
+    <div id="sdot"></div>
+    <span id="stxt">Kargatzen...</span>
   </div>
 
-  <!-- 4 GELEN TXARTELAK -->
-  <div class="rooms-grid">
-    <div class="room-card" id="card-1" style="--room-c:var(--c1)">
-      <div class="room-card-top">
-        <div>
-          <div class="room-num">Gela 1</div>
-          <div class="room-name">📐 Matematika</div>
-        </div>
-        <div class="room-status" id="status-1">⏳</div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('denborak')">⏱ Denborak</button>
+    <button class="tab" onclick="switchTab('kandadua')">🔒 Kandadua</button>
+  </div>
+
+  <!-- TAB 1: DENBORAK -->
+  <div class="panel active" id="panel-denborak">
+    <div class="rooms-grid">
+      <div class="room-card" id="card-1" style="--rc:var(--c1)">
+        <div class="rc-top"><div class="rc-label">Gela 1</div><div class="rc-status" id="st1">⏳</div></div>
+        <div class="rc-name">📐 Matematika</div>
+        <div class="rc-time wait" id="tm1">--:--</div>
+        <div class="rc-team" id="te1"></div>
       </div>
-      <div class="room-time-row">
-        <div class="room-time waiting" id="time-1">--:--</div>
-        <div class="room-time-lbl" id="timelbl-1"></div>
+      <div class="room-card" id="card-2" style="--rc:var(--c2)">
+        <div class="rc-top"><div class="rc-label">Gela 2</div><div class="rc-status" id="st2">⏳</div></div>
+        <div class="rc-name">⚗️ Emakumeak Zientzian</div>
+        <div class="rc-time wait" id="tm2">--:--</div>
+        <div class="rc-team" id="te2"></div>
       </div>
-      <div class="room-team" id="team-1"></div>
+      <div class="room-card" id="card-3" style="--rc:var(--c3)">
+        <div class="rc-top"><div class="rc-label">Gela 3</div><div class="rc-status" id="st3">⏳</div></div>
+        <div class="rc-name">🌱 Ingurumena</div>
+        <div class="rc-time wait" id="tm3">--:--</div>
+        <div class="rc-team" id="te3"></div>
+      </div>
+      <div class="room-card" id="card-4" style="--rc:var(--c4)">
+        <div class="rc-top"><div class="rc-label">Gela 4</div><div class="rc-status" id="st4">⏳</div></div>
+        <div class="rc-name">🤖 Robotika</div>
+        <div class="rc-time wait" id="tm4">--:--</div>
+        <div class="rc-team" id="te4"></div>
+      </div>
     </div>
 
-    <div class="room-card" id="card-2" style="--room-c:var(--c2)">
-      <div class="room-card-top">
-        <div>
-          <div class="room-num">Gela 2</div>
-          <div class="room-name">⚗️ Emakumeak Zientzian</div>
-        </div>
-        <div class="room-status" id="status-2">⏳</div>
-      </div>
-      <div class="room-time-row">
-        <div class="room-time waiting" id="time-2">--:--</div>
-        <div class="room-time-lbl" id="timelbl-2"></div>
-      </div>
-      <div class="room-team" id="team-2"></div>
+    <div class="total-box">
+      <div class="total-lbl">⏱ Denbora totala — 4 gelak</div>
+      <div class="total-val wait" id="total-val">--:--</div>
     </div>
 
-    <div class="room-card" id="card-3" style="--room-c:var(--c3)">
-      <div class="room-card-top">
-        <div>
-          <div class="room-num">Gela 3</div>
-          <div class="room-name">🌱 Ingurumena</div>
-        </div>
-        <div class="room-status" id="status-3">⏳</div>
-      </div>
-      <div class="room-time-row">
-        <div class="room-time waiting" id="time-3">--:--</div>
-        <div class="room-time-lbl" id="timelbl-3"></div>
-      </div>
-      <div class="room-team" id="team-3"></div>
-    </div>
-
-    <div class="room-card" id="card-4" style="--room-c:var(--c4)">
-      <div class="room-card-top">
-        <div>
-          <div class="room-num">Gela 4</div>
-          <div class="room-name">🤖 Robotika</div>
-        </div>
-        <div class="room-status" id="status-4">⏳</div>
-      </div>
-      <div class="room-time-row">
-        <div class="room-time waiting" id="time-4">--:--</div>
-        <div class="room-time-lbl" id="timelbl-4"></div>
-      </div>
-      <div class="room-team" id="team-4"></div>
+    <div class="refresh-row">
+      <button class="btn-refresh" onclick="loadResults()">↺ Freskatu</button>
+      <span class="auto-lbl" id="auto-lbl">Auto: 10s...</span>
     </div>
   </div>
 
-  <!-- KANDADUA -->
-  <div class="lock-section" id="lock-section">
-    <div class="lock-label">🔒 4 Digituko Kandadu-kodea</div>
-    <div class="lock-digits">
-      <div class="digit-box d1" id="dig-1">?</div>
-      <div class="digit-box d2" id="dig-2">?</div>
-      <div class="digit-box d3" id="dig-3">?</div>
-      <div class="digit-box d4" id="dig-4">?</div>
+  <!-- TAB 2: KANDADUA -->
+  <div class="panel" id="panel-kandadua">
+    <div class="lock-intro">
+      <h2>🔒 Sartu 4 kodeak</h2>
+      <p>Gela bakoitzean lortu duzuen zenbakia sartu ezazu.<br>4 gelak osatu badituzu, kandadua ireki daiteke!</p>
     </div>
-    <div class="lock-hint" id="lock-hint">Gela guztiak osatu ondoren agertuko da kodea.</div>
-    <div class="lock-open hidden" id="lock-open">🔓 Kandadua irekita! Sartu kodea eta atera!</div>
-  </div>
 
-  <!-- DENBORA TOTALA -->
-  <div class="total-section">
-    <div class="total-label">⏱ Denbora totala (4 gelak)</div>
-    <div class="total-time waiting" id="total-time">--:--</div>
-  </div>
+    <div class="digit-grid">
+      <div class="digit-group">
+        <div class="digit-label l1">📐 Gela 1</div>
+        <input class="digit-input d1" id="dig1" type="number" min="0" max="9" maxlength="1" placeholder="?" oninput="limitOne(this)" onkeyup="autoNext(this,'dig2')">
+      </div>
+      <div class="digit-group">
+        <div class="digit-label l2">⚗️ Gela 2</div>
+        <input class="digit-input d2" id="dig2" type="number" min="0" max="9" maxlength="1" placeholder="?" oninput="limitOne(this)" onkeyup="autoNext(this,'dig3')">
+      </div>
+      <div class="digit-group">
+        <div class="digit-label l3">🌱 Gela 3</div>
+        <input class="digit-input d3" id="dig3" type="number" min="0" max="9" maxlength="1" placeholder="?" oninput="limitOne(this)" onkeyup="autoNext(this,'dig4')">
+      </div>
+      <div class="digit-group">
+        <div class="digit-label l4">🤖 Gela 4</div>
+        <input class="digit-input d4" id="dig4" type="number" min="0" max="9" maxlength="1" placeholder="?" oninput="limitOne(this)" onkeyup="tryUnlock()">
+      </div>
+    </div>
 
-  <div class="refresh-row">
-    <button class="btn-refresh" onclick="loadResults()">↺ Freskatu</button>
-    <span class="auto-badge" id="auto-badge">Auto: 10s...</span>
+    <button class="btn-unlock" onclick="tryUnlock()">🔓 Kandadua ireki</button>
+
+    <div class="lock-result" id="lock-result">
+      <div class="lr-icon" id="lr-icon">🔓</div>
+      <div class="lr-title" id="lr-title">Irekita!</div>
+      <div class="lr-sub" id="lr-sub"></div>
+      <div class="lr-time" id="lr-time"></div>
+    </div>
   </div>
 </div>
-
-<footer>CIFP Don Bosco LHII · Errenteria · XIII dbSariak 2026</footer>
 
 <script>
 'use strict';
 
-// ══════════════════════════════
-//  ⚙️  KONFIGURAZIOA — aldatu!
-// ══════════════════════════════
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxc81SNB6Bx2xbdOQqI_AnS-UlS5wdvhA_Cv0ZvNDcYYXBKRRgrHZxJCHB-6Xvl1NXL/exec';
-const AUTO_REFRESH_SEC = 10;
 
 // Stars
 (function(){
@@ -215,100 +232,155 @@ const AUTO_REFRESH_SEC = 10;
   }
 })();
 
-function fmtTime(s){return Math.floor(s/60).toString().padStart(2,'0')+':'+(s%60).toString().padStart(2,'0');}
+// Tabs
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['denborak','kandadua'][i]===id));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+}
 
-let autoInterval=null;
-let countdown=AUTO_REFRESH_SEC;
-
-function startAutoRefresh(){
-  clearInterval(autoInterval);
-  countdown=AUTO_REFRESH_SEC;
-  autoInterval=setInterval(()=>{
+// ── AUTO REFRESH ──
+let autoInt=null, countdown=10;
+function startAuto(){
+  clearInterval(autoInt); countdown=10;
+  autoInt=setInterval(()=>{
     countdown--;
-    document.getElementById('auto-badge').textContent=`Auto: ${countdown}s...`;
-    if(countdown<=0){loadResults();}
+    document.getElementById('auto-lbl').textContent='Auto: '+countdown+'s...';
+    if(countdown<=0) loadResults();
   },1000);
 }
 
-async function loadResults(){
-  clearInterval(autoInterval);
-  document.getElementById('status-txt').textContent='Datuak kargatzen...';
-  document.getElementById('status-dot').style.background='#e8c44a';
+// ── LOAD RESULTS ──
+let lastData = null;
 
+async function loadResults(){
+  clearInterval(autoInt);
+  document.getElementById('sdot').style.background='#e8c44a';
+  document.getElementById('stxt').textContent='Datuak kargatzen...';
   try {
     const res = await fetch(APPS_SCRIPT_URL+'?action=results');
     const data = await res.json();
-    renderResults(data);
-    document.getElementById('status-txt').textContent='Azken eguneratzea: '+new Date().toLocaleTimeString('eu-ES');
-    document.getElementById('status-dot').style.background='#4ade80';
+    lastData = data;
+    renderRooms(data);
+    document.getElementById('sdot').style.background='#4ade80';
+    document.getElementById('stxt').textContent='Azken eguneratzea: '+new Date().toLocaleTimeString('eu-ES');
   } catch(e) {
-    document.getElementById('status-txt').textContent='⚠️ Konexio errorea — freskatzen saiatzen...';
-    document.getElementById('status-dot').style.background='#f43f5e';
+    document.getElementById('sdot').style.background='#f43f5e';
+    document.getElementById('stxt').textContent='⚠️ Konexio errorea';
   }
-  startAutoRefresh();
+  startAuto();
 }
 
-function renderResults(data){
+function renderRooms(data){
   const rooms = data.rooms || [null,null,null,null];
-
   rooms.forEach((r,i)=>{
     const n=i+1;
-    const timeEl=document.getElementById('time-'+n);
-    const statusEl=document.getElementById('status-'+n);
-    const teamEl=document.getElementById('team-'+n);
+    const tmEl=document.getElementById('tm'+n);
+    const stEl=document.getElementById('st'+n);
+    const teEl=document.getElementById('te'+n);
     const card=document.getElementById('card-'+n);
-
     if(r){
-      const prev=timeEl.textContent;
-      timeEl.textContent=r.time;
-      timeEl.className='room-time';
-      if(prev!==r.time) timeEl.style.animation='none',setTimeout(()=>timeEl.style.animation='',10);
-      statusEl.textContent='✅';
-      teamEl.textContent=r.teamName||'';
+      tmEl.textContent=r.time||'--';
+      tmEl.className='rc-time';
+      stEl.textContent='✅';
+      teEl.textContent=r.teamName||'';
       card.classList.add('done');
     } else {
-      timeEl.textContent='--:--';
-      timeEl.className='room-time waiting';
-      statusEl.textContent='⏳';
-      teamEl.textContent='';
+      tmEl.textContent='--:--';
+      tmEl.className='rc-time wait';
+      stEl.textContent='⏳';
+      teEl.textContent='';
       card.classList.remove('done');
     }
   });
 
-  // Kandadua
-  rooms.forEach((r,i)=>{
-    const dbox=document.getElementById('dig-'+(i+1));
-    if(r && r.code){
-      if(dbox.textContent!==r.code){
-        dbox.textContent=r.code;
-        dbox.classList.add('filled','animate');
-        setTimeout(()=>dbox.classList.remove('animate'),500);
-      }
-    } else {
-      dbox.textContent='?';
-      dbox.classList.remove('filled');
-    }
-  });
-
-  if(data.complete){
-    document.getElementById('lock-section').classList.add('unlocked');
-    document.getElementById('lock-hint').classList.add('hidden');
-    document.getElementById('lock-open').classList.remove('hidden');
-
-    const tt=document.getElementById('total-time');
-    tt.textContent=data.totalTime||'--:--';
-    tt.className='total-time';
+  const tv=document.getElementById('total-val');
+  if(data.complete && data.totalTime){
+    tv.textContent=data.totalTime;
+    tv.className='total-val';
   } else {
-    document.getElementById('lock-section').classList.remove('unlocked');
-    document.getElementById('lock-hint').classList.remove('hidden');
-    document.getElementById('lock-open').classList.add('hidden');
-    document.getElementById('total-time').textContent='--:--';
-    document.getElementById('total-time').className='total-time waiting';
+    tv.textContent='--:--';
+    tv.className='total-val wait';
   }
 }
 
-// CSS hidden class
-document.head.insertAdjacentHTML('beforeend','<style>.hidden{display:none!important;}</style>');
+// ── KANDADUA ──
+function limitOne(inp){
+  const v=inp.value.replace(/[^0-9]/g,'');
+  inp.value=v.length>1?v.slice(-1):v;
+}
+function autoNext(inp, nextId){
+  if(inp.value.length===1) document.getElementById(nextId)?.focus();
+}
+
+function tryUnlock(){
+  if(!lastData) { loadResults(); return; }
+
+  const codes = lastData.rooms
+    ? lastData.rooms.map(r => r ? String(r.code) : null)
+    : [null,null,null,null];
+
+  const inputs = [
+    document.getElementById('dig1'),
+    document.getElementById('dig2'),
+    document.getElementById('dig3'),
+    document.getElementById('dig4')
+  ];
+
+  // 4 inputak bete gabe badaude, ez egin ezer
+  if(inputs.some(i=>i.value==='')) return;
+
+  let allCorrect = true;
+  inputs.forEach((inp,i)=>{
+    inp.classList.remove('correct','wrong');
+    if(codes[i] === null){
+      // Gela hori oraindik ez da osatu
+      inp.classList.add('wrong');
+      allCorrect = false;
+    } else if(inp.value === codes[i]){
+      inp.classList.add('correct');
+    } else {
+      inp.classList.add('wrong');
+      allCorrect = false;
+    }
+  });
+
+  const result = document.getElementById('lock-result');
+  result.classList.add('show');
+
+  if(allCorrect){
+    result.className='lock-result show ok';
+    document.getElementById('lr-icon').textContent='🔓';
+    document.getElementById('lr-title').className='lr-title ok';
+    document.getElementById('lr-title').textContent='Kandadua irekita!';
+    document.getElementById('lr-sub').textContent='Zorionak! 4 gela guztiak gainditu dituzue.';
+    document.getElementById('lr-time').textContent=lastData.totalTime||'';
+    sparks(window.innerWidth/2, window.innerHeight/2, '#4ade80', 20);
+    setTimeout(()=>sparks(window.innerWidth/2, window.innerHeight/2, '#e8c44a', 16), 300);
+  } else {
+    result.className='lock-result show fail';
+    document.getElementById('lr-icon').textContent='🔒';
+    document.getElementById('lr-title').className='lr-title fail';
+    document.getElementById('lr-title').textContent='Kode okerra!';
+    const missing = codes.some(c=>c===null);
+    document.getElementById('lr-sub').textContent = missing
+      ? 'Oraindik gela guztiak ez dira osatu.'
+      : 'Zenbaki bat edo gehiago okerrak dira. Saiatu berriro!';
+    document.getElementById('lr-time').textContent='';
+    // Input okerrak txarra erakutsi
+    inputs.forEach(inp=>{ if(inp.classList.contains('wrong')) setTimeout(()=>inp.classList.remove('wrong'),1000); });
+  }
+}
+
+// Particles
+function sparks(x,y,color,n=10){
+  for(let i=0;i<n;i++){
+    const el=document.createElement('div');el.className='spk';
+    const sz=Math.random()*10+4,ang=Math.random()*Math.PI*2,d=Math.random()*120+40;
+    el.style.cssText=`width:${sz}px;height:${sz}px;background:${color};left:${x}px;top:${y}px;--tx:${Math.cos(ang)*d}px;--ty:${Math.sin(ang)*d}px;animation-duration:${Math.random()*.5+.5}s;`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),900);
+  }
+}
 
 // Hasi
 loadResults();
