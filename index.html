@@ -114,6 +114,25 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 .lr-sub{font-size:.95rem;color:var(--muted);line-height:1.7;}
 .lr-time{font-family:'JetBrains Mono',monospace;font-size:2.5rem;font-weight:700;color:#4ac9e8;margin-top:1rem;letter-spacing:4px;}
 
+
+/* ── RANKING ── */
+.rank-header{text-align:center;margin-bottom:1.5rem;}
+.rank-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:#fff;margin-bottom:.4rem;}
+.rank-sub{font-size:.9rem;color:var(--muted);}
+.rank-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;padding:14px 18px;background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;transition:border-color .2s;}
+.rank-row.first{border-color:var(--c1);background:rgba(232,196,74,0.06);}
+.rank-row.second{border-color:rgba(192,192,192,0.4);background:rgba(192,192,192,0.04);}
+.rank-row.third{border-color:rgba(180,100,30,0.4);background:rgba(180,100,30,0.04);}
+.rank-pos{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:700;width:36px;text-align:center;}
+.rank-pos.p1{color:var(--c1);}
+.rank-pos.p2{color:#c0c0c0;}
+.rank-pos.p3{color:#b4641e;}
+.rank-pos.pn{color:var(--muted);font-size:1rem;}
+.rank-team{font-size:1rem;font-weight:600;color:var(--text);}
+.rank-time{font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:#4ac9e8;}
+.rank-empty{text-align:center;padding:2rem;color:var(--muted);font-size:.95rem;}
+.rank-loading{text-align:center;padding:2rem;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:.85rem;}
+
 /* PARTICLES */
 .spk{position:fixed;pointer-events:none;z-index:400;border-radius:50%;animation:spka .7s ease-out forwards;}
 @keyframes spka{0%{opacity:1;transform:translate(0,0)scale(1);}100%{opacity:0;transform:translate(var(--tx),var(--ty))scale(0);}}
@@ -137,6 +156,7 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
   <div class="tabs">
     <button class="tab active" onclick="switchTab('denborak')">⏱ Denborak</button>
     <button class="tab" onclick="switchTab('kandadua')">🔒 Kandadua</button>
+    <button class="tab" onclick="switchTab('ranking')">🏆 Ranking</button>
   </div>
 
   <!-- TAB 1: DENBORAK -->
@@ -214,6 +234,18 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
       <div class="lr-time" id="lr-time"></div>
     </div>
   </div>
+
+  <!-- TAB 3: RANKING -->
+  <div class="panel" id="panel-ranking">
+    <div class="rank-header">
+      <h2 class="rank-title">🏆 Ranking</h2>
+      <p class="rank-sub">Talde guztien emaitzak, denboraren arabera ordenatuta</p>
+    </div>
+    <div id="rank-list"></div>
+    <div class="refresh-row" style="margin-top:1rem;">
+      <button class="btn-refresh" onclick="loadRanking()">↺ Eguneratu</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -234,9 +266,10 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxc81SNB6Bx2xbd
 
 // Tabs
 function switchTab(id){
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['denborak','kandadua'][i]===id));
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['denborak','kandadua','ranking'][i]===id));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('active');
+  if(id==='ranking') loadRanking();
 }
 
 // ── AUTO REFRESH ──
@@ -388,6 +421,43 @@ function sparks(x,y,color,n=10){
 
 // Hasi
 loadResults();
+// ── RANKING ──
+const RANKING_SHEET = 'Emaitzak';
+
+async function loadRanking(){
+  const list = document.getElementById('rank-list');
+  if(!list) return;
+  list.innerHTML = '<div class="rank-loading">⏳ Kargatzen...</div>';
+  try {
+    const res = await fetch(APPS_SCRIPT_URL + '?action=ranking');
+    const data = await res.json();
+    renderRanking(data.ranking || []);
+  } catch(e) {
+    list.innerHTML = '<div class="rank-empty">⚠️ Ezin izan da kargatu</div>';
+  }
+}
+
+function renderRanking(rows){
+  const list = document.getElementById('rank-list');
+  if(!rows.length){
+    list.innerHTML = '<div class="rank-empty">Oraindik ez dago emaitzarik.<br>Taldeak Emaitzak fitxan sartu behar dituzu.</div>';
+    return;
+  }
+  const medals = ['🥇','🥈','🥉'];
+  const posClass = ['first','second','third'];
+  const posColor = ['p1','p2','p3'];
+  list.innerHTML = rows.map((r,i)=>{
+    const pos = i < 3 ? medals[i] : (i+1)+'.';
+    const rc = i < 3 ? posClass[i] : '';
+    const pc = i < 3 ? posColor[i] : 'pn';
+    return `<div class="rank-row ${rc}">
+      <div class="rank-pos ${pc}">${pos}</div>
+      <div class="rank-team">${r.team}</div>
+      <div class="rank-time">${r.time}</div>
+    </div>`;
+  }).join('');
+}
+
 </script>
 </body>
 </html>
