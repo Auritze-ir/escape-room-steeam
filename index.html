@@ -119,6 +119,23 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 .team-time-box{text-align:center;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:10px 16px;}
 .team-time-lbl{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
 .team-time-val{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:700;color:#4ac9e8;}
+.team-input{cursor:pointer;caret-color:transparent;}
+.team-input:focus{outline:none;}
+/* Teklatu birtuala */
+.vkb-wrap{max-width:420px;margin:0 auto 1.2rem;display:none;}
+.vkb-wrap.show{display:block;}
+.vkb-display{background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.2);border-radius:10px;padding:10px 14px;font-family:'Space Grotesk',sans-serif;font-size:1rem;color:var(--text);min-height:42px;margin-bottom:8px;position:relative;}
+.vkb-display .cursor{display:inline-block;width:2px;height:1.1em;background:var(--text);vertical-align:text-bottom;animation:cur .8s step-end infinite;}
+@keyframes cur{0%,100%{opacity:1;}50%{opacity:0;}}
+.vkb-rows{display:flex;flex-direction:column;gap:5px;}
+.vkb-row{display:flex;gap:5px;justify-content:center;}
+.vkb-key{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);border-radius:7px;padding:9px 0;font-family:'Space Grotesk',sans-serif;font-size:.92rem;font-weight:500;color:var(--text);cursor:pointer;transition:all .12s;flex:1;min-width:0;text-align:center;user-select:none;}
+.vkb-key:hover{background:rgba(255,255,255,0.16);}
+.vkb-key:active{transform:scale(.93);background:rgba(255,255,255,0.22);}
+.vkb-key.wide{flex:2;}
+.vkb-key.del{background:rgba(244,63,94,0.12);border-color:rgba(244,63,94,0.25);color:#f87171;}
+.vkb-key.del:hover{background:rgba(244,63,94,0.22);}
+.vkb-key.space{flex:4;letter-spacing:.1em;font-size:.78rem;color:var(--muted);}
 .btn-unlock{display:block;width:100%;max-width:320px;margin:0 auto 1.5rem;background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.15);color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;padding:15px;border-radius:10px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:all .2s;}
 .btn-unlock:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.3);}
 
@@ -255,12 +272,17 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
     <div class="team-row">
       <div class="team-field">
         <label class="team-label">Taldearen izena</label>
-        <input class="team-input" id="team-name" type="text" placeholder="Adib: Talde Gorria" maxlength="30">
+        <input class="team-input" id="team-name" type="text" placeholder="Sakatu izena idazteko" maxlength="30" readonly onclick="toggleVkb()" autocomplete="off">
       </div>
       <div class="team-time-box">
         <div class="team-time-lbl">Denbora totala</div>
         <div class="team-time-val" id="team-total-time">--:--</div>
       </div>
+    </div>
+
+    <!-- Teklatu birtuala -->
+    <div class="vkb-wrap" id="vkb-wrap">
+      <div class="vkb-rows" id="vkb-rows"></div>
     </div>
 
     <button class="btn-unlock" onclick="tryUnlock()">🔓 Kandadua ireki</button>
@@ -308,7 +330,7 @@ function switchTab(id){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('active');
   if(id==='ranking') loadRanking();
-  if(id==='kandadua') initNumBank();
+  if(id==='kandadua'){ initNumBank(); closeVkb(); }
 }
 
 // ── AUTO REFRESH ──
@@ -570,6 +592,58 @@ function sparks(x,y,color,n=10){
 
 // Hasi
 loadResults();
+// ── TEKLATU BIRTUALA ──
+const VKB_LAYOUT = [
+  ['Q','W','E','R','T','Y','U','I','O','P'],
+  ['A','S','D','F','G','H','J','K','L'],
+  ['Z','X','C','V','B','N','M','⌫'],
+  ['ZURUNE','1','2','3','4','5','6','7','8','9','0'],
+];
+
+let vkbVisible = false;
+
+function buildVkb(){
+  const wrap = document.getElementById('vkb-rows');
+  if(!wrap || wrap.children.length > 0) return;
+  VKB_LAYOUT.forEach(row=>{
+    const rowEl = document.createElement('div');
+    rowEl.className = 'vkb-row';
+    row.forEach(k=>{
+      const btn = document.createElement('div');
+      btn.className = 'vkb-key';
+      if(k==='⌫') btn.classList.add('del');
+      if(k==='ZURUNE') { btn.classList.add('space'); btn.textContent='ZURUNE'; }
+      else btn.textContent = k;
+      btn.addEventListener('click', ()=>vkbPress(k));
+      rowEl.appendChild(btn);
+    });
+    wrap.appendChild(rowEl);
+  });
+}
+
+function vkbPress(k){
+  const inp = document.getElementById('team-name');
+  if(k==='⌫'){
+    inp.value = inp.value.slice(0,-1);
+  } else if(k==='ZURUNE'){
+    if(inp.value.length < 30) inp.value += ' ';
+  } else {
+    if(inp.value.length < 30) inp.value += k;
+  }
+}
+
+function toggleVkb(){
+  vkbVisible = !vkbVisible;
+  const wrap = document.getElementById('vkb-wrap');
+  wrap.classList.toggle('show', vkbVisible);
+  if(vkbVisible) buildVkb();
+}
+
+function closeVkb(){
+  vkbVisible = false;
+  document.getElementById('vkb-wrap')?.classList.remove('show');
+}
+
 // ── GORDE TALDEA ──
 async function saveTeamResult(){
   const name = document.getElementById('team-name')?.value.trim() || 'Taldea';
