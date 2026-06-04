@@ -75,27 +75,38 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 
 /* ── TAB 2: KANDADUA ── */
-.lock-intro{text-align:center;margin-bottom:2rem;}
+.lock-intro{text-align:center;margin-bottom:1.5rem;}
 .lock-intro h2{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:#fff;margin-bottom:.5rem;}
-.lock-intro p{font-size:.95rem;color:var(--muted);line-height:1.7;}
+.lock-intro p{font-size:.92rem;color:var(--muted);line-height:1.7;}
 
-.digit-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:420px;margin:0 auto 2rem;}
-.digit-group{display:flex;flex-direction:column;align-items:center;gap:8px;}
-.digit-label{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px;}
-.digit-label.l1{color:var(--c1);}
-.digit-label.l2{color:var(--c2);}
-.digit-label.l3{color:var(--c3);}
-.digit-label.l4{color:var(--c4);}
-.digit-input{width:100%;height:72px;background:rgba(255,255,255,0.05);border:2px solid var(--border);border-radius:12px;font-family:'JetBrains Mono',monospace;font-size:2.4rem;font-weight:700;text-align:center;color:var(--text);outline:none;transition:all .2s;-moz-appearance:textfield;}
-.digit-input::-webkit-outer-spin-button,
-.digit-input::-webkit-inner-spin-button{-webkit-appearance:none;}
-.digit-input:focus{border-color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.08);}
-.digit-input.d1:focus{border-color:var(--c1);}
-.digit-input.d2:focus{border-color:var(--c2);}
-.digit-input.d3:focus{border-color:var(--c3);}
-.digit-input.d4:focus{border-color:var(--c4);}
-.digit-input.correct{border-color:var(--ok);background:rgba(74,222,128,0.08);color:var(--ok);}
-.digit-input.wrong{border-color:#f43f5e;background:rgba(244,63,94,0.07);animation:shake .3s ease;}
+/* Zenbaki bankua */
+.num-bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:1.4rem;}
+.num-chip{width:52px;height:52px;background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:700;color:var(--text);cursor:grab;user-select:none;transition:all .18s;}
+.num-chip:active{cursor:grabbing;}
+.num-chip:hover{background:rgba(255,255,255,0.13);border-color:rgba(255,255,255,0.3);transform:scale(1.08);}
+.num-chip.used{opacity:.25;cursor:not-allowed;pointer-events:none;}
+.num-chip.dragging{opacity:.4;transform:scale(.92);}
+
+/* Gela sloteak */
+.slot-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:420px;margin:0 auto 1.4rem;}
+.slot-group{display:flex;flex-direction:column;align-items:center;gap:7px;}
+.slot-label{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;}
+.slot-label.l1{color:var(--c1);}
+.slot-label.l2{color:var(--c2);}
+.slot-label.l3{color:var(--c3);}
+.slot-label.l4{color:var(--c4);}
+.slot-box{width:100%;height:68px;background:rgba(255,255,255,0.04);border:2px dashed rgba(255,255,255,0.18);border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:2.2rem;font-weight:700;color:var(--text);transition:all .2s;cursor:pointer;position:relative;}
+.slot-box:empty::before{content:'?';color:rgba(255,255,255,0.18);font-size:1.8rem;}
+.slot-box.dragover{border-color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.1);}
+.slot-box.filled-1{border-color:var(--c1);background:rgba(232,196,74,0.08);color:var(--c1);}
+.slot-box.filled-2{border-color:var(--c2);background:rgba(168,85,247,0.08);color:var(--c2);}
+.slot-box.filled-3{border-color:var(--c3);background:rgba(74,222,128,0.08);color:var(--c3);}
+.slot-box.filled-4{border-color:var(--c4);background:rgba(249,115,22,0.08);color:var(--c4);}
+.slot-box.correct{border-color:var(--ok);background:rgba(74,222,128,0.1);color:var(--ok);}
+.slot-box.wrong{border-color:#f43f5e;background:rgba(244,63,94,0.08);color:#f87171;animation:shake .3s ease;}
+
+.slot-clear{position:absolute;top:3px;right:5px;font-size:.65rem;color:rgba(255,255,255,0.3);cursor:pointer;line-height:1;}
+.slot-clear:hover{color:#f43f5e;}
 
 @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
 
@@ -203,25 +214,31 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
   <div class="panel" id="panel-kandadua">
     <div class="lock-intro">
       <h2>🔒 Sartu 4 kodeak</h2>
-      <p>Gela bakoitzean lortu duzuen zenbakia sartu ezazu.<br>4 gelak osatu badituzu, kandadua ireki daiteke!</p>
+      <p>Arrastatu zenbakia gela bakoitzaren laukira.<br>Ezin dira zenbaki berdinak bi lekutan jarri.</p>
     </div>
 
-    <div class="digit-grid">
-      <div class="digit-group">
-        <div class="digit-label l1">📐 Gela 1</div>
-        <input class="digit-input d1" id="dig1" type="number" min="0" max="9" maxlength="1" placeholder="?" oninput="limitOne(this)" onkeyup="autoNext(this,'dig2')">
+    <!-- Zenbaki bankua: 0-9 -->
+    <div class="num-bank" id="num-bank">
+      <!-- JS-k sortuko du -->
+    </div>
+
+    <!-- 4 gelen sloteak -->
+    <div class="slot-row">
+      <div class="slot-group">
+        <div class="slot-label l1">📐 Gela 1</div>
+        <div class="slot-box" id="slot-1" data-slot="1" ondragover="slotDragOver(event)" ondrop="slotDrop(event,1)" onclick="slotClick(1)"></div>
       </div>
-      <div class="digit-group">
-        <div class="digit-label l2">⚗️ Gela 2</div>
-        <input class="digit-input d2" id="dig2" type="number" min="0" max="9" maxlength="1" placeholder="?" oninput="limitOne(this)" onkeyup="autoNext(this,'dig3')">
+      <div class="slot-group">
+        <div class="slot-label l2">⚗️ Gela 2</div>
+        <div class="slot-box" id="slot-2" data-slot="2" ondragover="slotDragOver(event)" ondrop="slotDrop(event,2)" onclick="slotClick(2)"></div>
       </div>
-      <div class="digit-group">
-        <div class="digit-label l3">🌱 Gela 3</div>
-        <input class="digit-input d3" id="dig3" type="number" min="0" max="9" maxlength="1" placeholder="?" oninput="limitOne(this)" onkeyup="autoNext(this,'dig4')">
+      <div class="slot-group">
+        <div class="slot-label l3">🌱 Gela 3</div>
+        <div class="slot-box" id="slot-3" data-slot="3" ondragover="slotDragOver(event)" ondrop="slotDrop(event,3)" onclick="slotClick(3)"></div>
       </div>
-      <div class="digit-group">
-        <div class="digit-label l4">🤖 Gela 4</div>
-        <input class="digit-input d4" id="dig4" type="number" min="0" max="9" maxlength="1" placeholder="?" oninput="limitOne(this)" onkeyup="tryUnlock()">
+      <div class="slot-group">
+        <div class="slot-label l4">🤖 Gela 4</div>
+        <div class="slot-box" id="slot-4" data-slot="4" ondragover="slotDragOver(event)" ondrop="slotDrop(event,4)" onclick="slotClick(4)"></div>
       </div>
     </div>
 
@@ -270,6 +287,7 @@ function switchTab(id){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('active');
   if(id==='ranking') loadRanking();
+  if(id==='kandadua') initNumBank();
 }
 
 // ── AUTO REFRESH ──
@@ -341,44 +359,147 @@ function renderRooms(data){
   }
 }
 
-// ── KANDADUA ──
-function limitOne(inp){
-  const v=inp.value.replace(/[^0-9]/g,'');
-  inp.value=v.length>1?v.slice(-1):v;
+// ── KANDADUA: DRAG & DROP ──
+const slotValues = {1:null, 2:null, 3:null, 4:null};
+let dragNum = null;
+let activeSlot = null; // touch-entzat
+
+function initNumBank(){
+  const bank = document.getElementById('num-bank');
+  if(!bank) return;
+  bank.innerHTML = '';
+  for(let n=0; n<=9; n++){
+    const chip = document.createElement('div');
+    chip.className = 'num-chip';
+    chip.id = 'chip-'+n;
+    chip.textContent = n;
+    chip.draggable = true;
+    chip.dataset.num = n;
+    // Desktop drag
+    chip.addEventListener('dragstart', e=>{
+      dragNum = String(n);
+      chip.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'copy';
+    });
+    chip.addEventListener('dragend', ()=>chip.classList.remove('dragging'));
+    // Touch
+    chip.addEventListener('touchstart', e=>{
+      dragNum = String(n);
+      chip.classList.add('dragging');
+    },{passive:true});
+    chip.addEventListener('touchend', e=>{
+      chip.classList.remove('dragging');
+      // Aurkitu zein slot dagoen ukituta
+      const touch = e.changedTouches[0];
+      const el = document.elementFromPoint(touch.clientX, touch.clientY);
+      const slot = el && el.closest('.slot-box');
+      if(slot) {
+        const sn = parseInt(slot.dataset.slot);
+        assignToSlot(sn, dragNum);
+      }
+      dragNum = null;
+    });
+    bank.appendChild(chip);
+  }
+  updateBank();
 }
-function autoNext(inp, nextId){
-  if(inp.value.length===1) document.getElementById(nextId)?.focus();
+
+function slotDragOver(e){ e.preventDefault(); e.currentTarget.classList.add('dragover'); }
+
+function slotDrop(e, slotNum){
+  e.preventDefault();
+  e.currentTarget.classList.remove('dragover');
+  if(dragNum === null) return;
+  assignToSlot(slotNum, dragNum);
+  dragNum = null;
+}
+
+function slotClick(slotNum){
+  // Slota hutsa bada, ezer ez
+  // Beteta badago, garbitu
+  if(slotValues[slotNum] !== null){
+    clearSlot(slotNum);
+  }
+}
+
+function assignToSlot(slotNum, num){
+  // Zenbakia beste slot batean badago, kendu
+  Object.keys(slotValues).forEach(k=>{
+    if(slotValues[k] === num) clearSlot(parseInt(k));
+  });
+  // Slot honetan zenbakia bazegoen, itzuli bankura
+  if(slotValues[slotNum] !== null) freeChip(slotValues[slotNum]);
+  
+  slotValues[slotNum] = num;
+  const box = document.getElementById('slot-'+slotNum);
+  box.textContent = num;
+  box.className = 'slot-box filled-'+slotNum;
+  // X botoia gehitu
+  const x = document.createElement('span');
+  x.className = 'slot-clear';
+  x.textContent = '✕';
+  x.onclick = e=>{ e.stopPropagation(); clearSlot(slotNum); };
+  box.appendChild(x);
+
+  updateBank();
+  document.getElementById('lock-result').classList.remove('show');
+}
+
+function clearSlot(slotNum){
+  const num = slotValues[slotNum];
+  if(num === null) return;
+  slotValues[slotNum] = null;
+  const box = document.getElementById('slot-'+slotNum);
+  box.textContent = '';
+  box.className = 'slot-box';
+  freeChip(num);
+  updateBank();
+}
+
+function freeChip(num){
+  const chip = document.getElementById('chip-'+num);
+  if(chip) chip.classList.remove('used');
+}
+
+function updateBank(){
+  const used = Object.values(slotValues).filter(v=>v!==null);
+  for(let n=0; n<=9; n++){
+    const chip = document.getElementById('chip-'+n);
+    if(!chip) continue;
+    chip.classList.toggle('used', used.includes(String(n)));
+  }
 }
 
 function tryUnlock(){
-  if(!lastData) { loadResults(); return; }
+  if(!lastData){ loadResults(); return; }
 
   const codes = lastData.rooms
     ? lastData.rooms.map(r => r ? String(r.code) : null)
     : [null,null,null,null];
 
-  const inputs = [
-    document.getElementById('dig1'),
-    document.getElementById('dig2'),
-    document.getElementById('dig3'),
-    document.getElementById('dig4')
-  ];
-
-  // 4 inputak bete gabe badaude, ez egin ezer
-  if(inputs.some(i=>i.value==='')) return;
+  // 4 slot beteta egon behar dira
+  if(Object.values(slotValues).some(v=>v===null)){
+    const result = document.getElementById('lock-result');
+    result.className = 'lock-result show fail';
+    document.getElementById('lr-icon').textContent = '🔒';
+    document.getElementById('lr-title').className = 'lr-title fail';
+    document.getElementById('lr-title').textContent = 'Osatu 4 gelak!';
+    document.getElementById('lr-sub').textContent = 'Jarri zenbaki bat gela bakoitzean.';
+    document.getElementById('lr-time').textContent = '';
+    return;
+  }
 
   let allCorrect = true;
-  inputs.forEach((inp,i)=>{
-    inp.classList.remove('correct','wrong');
-    if(codes[i] === null){
-      // Gela hori oraindik ez da osatu
-      inp.classList.add('wrong');
-      allCorrect = false;
-    } else if(inp.value === codes[i]){
-      inp.classList.add('correct');
+  [1,2,3,4].forEach(i=>{
+    const box = document.getElementById('slot-'+i);
+    box.classList.remove('correct','wrong');
+    const xBtn = box.querySelector('.slot-clear');
+    if(codes[i-1] === null){
+      box.classList.add('wrong'); allCorrect = false;
+    } else if(slotValues[i] === codes[i-1]){
+      box.classList.add('correct');
     } else {
-      inp.classList.add('wrong');
-      allCorrect = false;
+      box.classList.add('wrong'); allCorrect = false;
     }
   });
 
@@ -386,26 +507,29 @@ function tryUnlock(){
   result.classList.add('show');
 
   if(allCorrect){
-    result.className='lock-result show ok';
-    document.getElementById('lr-icon').textContent='🔓';
-    document.getElementById('lr-title').className='lr-title ok';
-    document.getElementById('lr-title').textContent='Kandadua irekita!';
-    document.getElementById('lr-sub').textContent='Zorionak! 4 gela guztiak gainditu dituzue.';
-    document.getElementById('lr-time').textContent=lastData.totalTime||'';
+    result.className = 'lock-result show ok';
+    document.getElementById('lr-icon').textContent = '🔓';
+    document.getElementById('lr-title').className = 'lr-title ok';
+    document.getElementById('lr-title').textContent = 'Kandadua irekita!';
+    document.getElementById('lr-sub').textContent = 'Zorionak! 4 gela guztiak gainditu dituzue.';
+    document.getElementById('lr-time').textContent = lastData.totalTime||'';
     sparks(window.innerWidth/2, window.innerHeight/2, '#4ade80', 20);
     setTimeout(()=>sparks(window.innerWidth/2, window.innerHeight/2, '#e8c44a', 16), 300);
   } else {
-    result.className='lock-result show fail';
-    document.getElementById('lr-icon').textContent='🔒';
-    document.getElementById('lr-title').className='lr-title fail';
-    document.getElementById('lr-title').textContent='Kode okerra!';
+    result.className = 'lock-result show fail';
+    document.getElementById('lr-icon').textContent = '🔒';
+    document.getElementById('lr-title').className = 'lr-title fail';
+    document.getElementById('lr-title').textContent = 'Kode okerra!';
     const missing = codes.some(c=>c===null);
     document.getElementById('lr-sub').textContent = missing
       ? 'Oraindik gela guztiak ez dira osatu.'
       : 'Zenbaki bat edo gehiago okerrak dira. Saiatu berriro!';
-    document.getElementById('lr-time').textContent='';
-    // Input okerrak txarra erakutsi
-    inputs.forEach(inp=>{ if(inp.classList.contains('wrong')) setTimeout(()=>inp.classList.remove('wrong'),1000); });
+    document.getElementById('lr-time').textContent = '';
+    setTimeout(()=>{
+      [1,2,3,4].forEach(i=>{
+        document.getElementById('slot-'+i).classList.remove('wrong','correct');
+      });
+    }, 1200);
   }
 }
 
