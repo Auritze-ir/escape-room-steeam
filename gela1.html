@@ -297,11 +297,13 @@ function goIntro(){stopTimer();showScreen('s-intro');document.getElementById('fa
 function startGame(){
   teamName=document.getElementById('team-name').value.trim()||'Taldea';
   qIdx=0;totalErrors=0;correctCount=0;elapsedSec=0;
+  shuffle(QUESTIONS);
   showScreen('s-game');startTimer();renderQ();
 }
 function retryGame(){
   document.getElementById('fail').style.display='none';
   qIdx=0;correctCount=0;elapsedSec=0;
+  shuffle(QUESTIONS);
   startTimer();renderQ();
 }
 
