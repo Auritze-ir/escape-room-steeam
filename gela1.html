@@ -352,7 +352,7 @@ function answer(idx,btn){
   }
 }
 
-function nextQ(){ qIdx++; if(correctCount>=2){ startCalc(); return; } if(qIdx>=5){ stopTimer(); document.getElementById("fail").style.display="flex"; return; } renderQ(); }
+function nextQ(){ qIdx++; if(correctCount>=2){ startCalc(); return; } if(qIdx>=5){ shuffle(QUESTIONS); qIdx=0; } renderQ(); }
 
 function startCalc(){
   calcOps=genOps();calcIdx=0;calcDone=0;calcInput='';calcBlocked=false;
