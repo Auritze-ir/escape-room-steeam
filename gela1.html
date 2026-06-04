@@ -149,9 +149,9 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
   <h1 class="room-title">📐 <span>Matematika</span><br>Laborategia</h1>
   <div class="room-desc"><strong>⚠️ Kodea blokeatu da.</strong> Matematikako 3 galderari erantzun eta gero <strong>kalkulagailu-erronka</strong> gainditu behar duzu kodea lortzeko. Denbora kontatzen hasten da "Hasi" sakatzean.</div>
   <div class="rules-row">
-    <div class="rule-chip"><span>📝</span> <strong>3 galdera</strong></div>
+    <div class="rule-chip"><span>📝</span> <strong>5 galdera max.</strong></div>
     <div class="rule-chip"><span>🧮</span> <strong>Kalkulagailu-jolasa</strong></div>
-    <div class="rule-chip"><span>✅</span> Min. <strong>3 zuzen</strong></div>
+    <div class="rule-chip"><span>✅</span> <strong>2 ondo</strong> lortu behar</div>
     <div class="rule-chip"><span>⏱️</span> <strong>Denbora kontatzen</strong></div>
   </div>
   <div class="name-form">
@@ -320,7 +320,7 @@ function renderQ(){
     <div class="q-card">
       <div class="q-header">
         <div class="q-icon">📐</div>
-        <div><div class="q-meta">Matematika</div><div class="q-num">Galdera ${qIdx+1}/3 · Min. 2 zuzen</div></div>
+        <div><div class="q-meta">Matematika</div><div class="q-num">Galdera ${qIdx+1} · 2 ondo lortu</div></div>
         <div class="q-badge">${correctCount}/2 ✓</div>
       </div>
       <div class="q-text">${q.text}</div>${fml}
@@ -347,7 +347,7 @@ function answer(idx,btn){
     sparks(r.left+r.width/2,r.top+r.height/2,'#f43f5e',8);
     totalErrors++;
     
-    else setTimeout(()=>nextQ(),1800);
+    setTimeout(()=>nextQ(),1800);
   }
 }
 
