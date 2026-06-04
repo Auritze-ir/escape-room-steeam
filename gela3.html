@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gela 3 · Ingurumena · dbSariak 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
+:root{--bg:#070b0f;--surface:#0c1318;--border:rgba(255,255,255,0.08);--text:#e8edf5;--muted:rgba(232,237,245,0.55);--accent:#4ade80;--accent-dim:rgba(74,222,128,0.1);--accent-glow:rgba(74,222,128,0.22);--ok:#4ade80;--err:#f43f5e;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+#sf{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.st{position:absolute;border-radius:50%;background:#fff;opacity:0;animation:tw var(--d,3s) var(--dl,0s) ease-in-out infinite;}
+@keyframes tw{0%,100%{opacity:0;}50%{opacity:var(--op,.5);}}
+.screen{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1rem;}
+.screen.hidden{display:none;}
+.room-badge{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--accent);letter-spacing:.2em;text-transform:uppercase;border:1px solid var(--accent-glow);padding:5px 16px;border-radius:99px;background:var(--accent-dim);}
+.room-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,6vw,3.5rem);font-weight:700;color:#fff;text-align:center;line-height:1.1;}
+.room-title span{color:var(--accent);font-style:italic;}
+.room-desc{max-width:560px;text-align:center;font-size:1rem;line-height:1.8;color:var(--muted);background:rgba(255,255,255,0.04);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:1.2rem 1.6rem;}
+.room-desc strong{color:var(--accent);}
+.name-form{display:flex;flex-direction:column;gap:10px;align-items:center;width:100%;max-width:360px;}
+.name-input{width:100%;background:rgba(255,255,255,0.06);border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;font-family:'Space Grotesk',sans-serif;font-size:1rem;color:var(--text);outline:none;transition:border-color .2s;}
+.name-input:focus{border-color:var(--accent);}
+.name-input::placeholder{color:var(--muted);}
+.name-label{font-size:.82rem;color:var(--muted);align-self:flex-start;}
+.rules-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:560px;}
+.rule-chip{display:flex;align-items:center;gap:7px;padding:7px 13px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;font-size:.82rem;color:var(--muted);}
+.rule-chip strong{color:var(--text);}
+.btn-start{background:var(--accent);color:#030a04;border:none;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:15px 48px;border-radius:8px;transition:transform .15s,box-shadow .15s;}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 6px 28px var(--accent-glow);}
+#s-game{justify-content:flex-start;padding:0;}
+#hud{width:100%;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:11px 22px;background:rgba(7,11,15,0.96);border-bottom:1px solid var(--border);backdrop-filter:blur(10px);gap:10px;position:sticky;top:0;z-index:10;}
+.hud-l{display:flex;align-items:center;gap:14px;}
+.hud-room{font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--accent);letter-spacing:.14em;text-transform:uppercase;}
+.hud-sub{font-size:.7rem;color:var(--muted);margin-top:1px;}
+.err-row{display:flex;gap:4px;}
+.edot{width:11px;height:11px;border-radius:50%;background:#c0392b;box-shadow:0 0 5px #c0392b;transition:all .3s;}
+.edot.used{background:#1a1a2e;box-shadow:none;border:1px solid var(--border);}
+.hud-c{text-align:center;}
+#timer{font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:700;color:var(--accent);letter-spacing:.1em;}
+.hud-r{display:flex;justify-content:flex-end;}
+.pts{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--accent);}
+.pts small{font-size:.62rem;color:var(--muted);margin-right:3px;}
+#prog-wrap{width:100%;height:2px;background:var(--border);}
+#prog{height:100%;background:var(--accent);transition:width .4s;}
+#game-area{flex:1;width:100%;display:flex;align-items:center;justify-content:center;padding:20px 14px;}
+.q-card{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:16px;padding:26px 28px;max-width:720px;width:100%;display:flex;flex-direction:column;gap:18px;animation:cardIn .3s ease;}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.q-header{display:flex;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.q-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;background:var(--accent-dim);}
+.q-meta{font-family:'JetBrains Mono',monospace;font-size:.73rem;color:var(--accent);letter-spacing:.13em;text-transform:uppercase;}
+.q-num{font-size:.7rem;color:var(--muted);margin-top:2px;}
+.q-badge{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:.76rem;padding:4px 11px;border-radius:99px;border:1px solid var(--border);color:var(--muted);}
+.q-text{font-size:clamp(.93rem,1.7vw,1.08rem);line-height:1.75;}
+.q-formula{font-family:'JetBrains Mono',monospace;font-size:1rem;text-align:center;padding:10px 18px;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.14);color:var(--accent);}
+.q-opts{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.q-opt{background:rgba(255,255,255,0.04);border:1.5px solid var(--border);border-radius:11px;padding:13px 15px;color:var(--text);cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:.9rem;text-align:left;display:flex;align-items:flex-start;gap:9px;transition:all .15s;line-height:1.5;}
+.q-opt:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.22);transform:translateX(3px);}
+.q-opt .ok{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);min-width:16px;margin-top:2px;}
+.q-opt.correct{border-color:var(--ok);background:rgba(74,222,128,0.08);color:var(--ok);}
+.q-opt.wrong{border-color:var(--err);background:rgba(244,63,94,0.07);color:#f87171;}
+.q-fb{font-size:.88rem;line-height:1.65;padding:11px 15px;border-radius:8px;display:none;}
+.q-fb.show{display:block;}
+.q-fb.ok{background:rgba(74,222,128,0.08);border-left:3px solid var(--ok);color:#86efac;}
+.q-fb.err{background:rgba(244,63,94,0.08);border-left:3px solid var(--err);color:#fca5a5;}
+
+/* ═══ JOLAS 3: BIRZIKLAKETA DRAG & DROP ═══ */
+#s-game2{justify-content:flex-start;padding:0;}
+.recyc-wrap{flex:1;width:100%;display:flex;flex-direction:column;align-items:center;padding:16px 14px;gap:14px;overflow-y:auto;}
+.recyc-title{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;text-align:center;}
+.recyc-sub{font-size:.85rem;color:var(--muted);text-align:center;}
+.recyc-score{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--accent);}
+.items-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:560px;min-height:50px;padding:8px;background:rgba(255,255,255,0.03);border:1px dashed var(--border);border-radius:12px;width:100%;}
+.drag-item{background:rgba(255,255,255,0.07);border:1.5px solid var(--border);border-radius:8px;padding:8px 14px;font-size:.88rem;cursor:grab;transition:all .2s;user-select:none;white-space:nowrap;}
+.drag-item:active{cursor:grabbing;opacity:.7;}
+.drag-item.dragging{opacity:.5;transform:scale(.95);}
+.bins-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:560px;width:100%;}
+@media(min-width:500px){.bins-row{grid-template-columns:repeat(4,1fr);}}
+.bin{background:rgba(255,255,255,0.04);border:2px dashed var(--border);border-radius:14px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;min-height:110px;transition:border-color .2s;}
+.bin.dragover{border-color:var(--accent);background:rgba(74,222,128,0.07);}
+.bin-icon{font-size:1.8rem;}
+.bin-label{font-size:.72rem;text-align:center;color:var(--muted);font-weight:600;letter-spacing:.04em;}
+.bin-items{display:flex;flex-direction:column;gap:3px;width:100%;}
+.bin-item{font-size:.72rem;padding:3px 6px;border-radius:5px;text-align:center;}
+.bin-item.ok{background:rgba(74,222,128,0.15);color:var(--ok);}
+.bin-item.err{background:rgba(244,63,94,0.12);color:#f87171;}
+.btn-check{background:var(--accent);color:#030a04;border:none;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:700;padding:13px 36px;border-radius:8px;transition:transform .15s;}
+.btn-check:hover{transform:translateY(-2px);}
+
+#fail{position:fixed;inset:0;z-index:60;background:rgba(7,11,15,0.97);display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;backdrop-filter:blur(8px);}
+.fail-h{font-family:'Playfair Display',serif;font-size:2.6rem;font-weight:700;color:var(--err);animation:fp .9s infinite;}
+@keyframes fp{0%,100%{opacity:1;}50%{opacity:.5;}}
+.fail-sub{font-size:.93rem;color:var(--muted);max-width:400px;text-align:center;line-height:1.7;}
+.fail-btns{display:flex;gap:12px;margin-top:8px;}
+.fbtn{border:none;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:.88rem;font-weight:700;padding:11px 26px;border-radius:8px;letter-spacing:.05em;text-transform:uppercase;transition:transform .15s;}
+.fbtn:hover{transform:scale(1.03);}
+.fbtn.retry{background:var(--err);color:#fff;}
+.fbtn.menu{background:rgba(255,255,255,0.08);color:var(--text);border:1px solid rgba(255,255,255,0.18);}
+#s-win{gap:1.6rem;}
+.win-sparks{font-size:2.2rem;letter-spacing:8px;animation:hs 2s linear infinite;}
+@keyframes hs{from{filter:hue-rotate(0deg);}to{filter:hue-rotate(360deg);}}
+.win-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,5.5vw,3.2rem);font-weight:700;color:#fff;text-align:center;line-height:1.1;}
+.win-title span{color:var(--accent);}
+.code-reveal{background:var(--surface);border:2px solid var(--accent);border-radius:18px;padding:28px 48px;text-align:center;}
+.code-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;letter-spacing:.2em;color:var(--muted);margin-bottom:10px;text-transform:uppercase;}
+.code-number{font-family:'JetBrains Mono',monospace;font-size:5rem;font-weight:700;color:var(--accent);line-height:1;text-shadow:0 0 30px var(--accent-glow);}
+.code-hint{font-size:.85rem;color:var(--muted);margin-top:10px;}
+.time-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 40px;text-align:center;}
+.time-label{font-family:'JetBrains Mono',monospace;font-size:.76rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.time-val{font-family:'JetBrains Mono',monospace;font-size:2.8rem;font-weight:700;color:var(--accent);}
+.win-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:360px;width:90%;}
+.wstat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;}
+.wstat-v{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--accent);}
+.wstat-l{font-size:.68rem;color:var(--muted);margin-top:2px;}
+.saving-msg{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--muted);}
+.spk{position:fixed;pointer-events:none;z-index:400;border-radius:50%;animation:spka .7s ease-out forwards;}
+@keyframes spka{0%{opacity:1;transform:translate(0,0)scale(1);}100%{opacity:0;transform:translate(var(--tx),var(--ty))scale(0);}}
+</style>
+</head>
+<body>
+<div id="sf"></div>
+<div id="s-intro" class="screen">
+  <div class="room-badge">XIII dbSariak · 2026 · Gela 3 / 4</div>
+  <h1 class="room-title">🌱 <span>Ingurumena</span><br>eta EkoBosko</h1>
+  <div class="room-desc"><strong>⚠️ Kodea blokeatu da.</strong> 3 galderari erantzun eta gero <strong>birziklaketa-jolasa</strong> gainditu behar duzu: hondakinak zaborrontzi egokira arrastatu.</div>
+  <div class="rules-row">
+    <div class="rule-chip"><span>📝</span> <strong>3 galdera</strong></div>
+    <div class="rule-chip"><span>♻️</span> <strong>Birziklaketa jolasa</strong></div>
+    <div class="rule-chip"><span>✅</span> Min. <strong>3 zuzen</strong></div>
+    <div class="rule-chip"><span>⏱️</span> <strong>Denbora kontatzen</strong></div>
+  </div>
+  <div class="name-form">
+    <label class="name-label">Taldearen izena (aukerakoa):</label>
+    <input class="name-input" id="team-name" type="text" placeholder="Adib: Talde Gorria" maxlength="30">
+  </div>
+  <button class="btn-start" onclick="startGame()">▶ Hasi</button>
+</div>
+
+<div id="s-game" class="screen hidden">
+  <div id="hud">
+    <div class="hud-l">
+      <div><div class="hud-room">🌱 Ingurumena</div><div class="hud-sub" id="hud-sub">Galdera 1/5 · ✓ 0/2</div></div>
+      
+    </div>
+    <div class="hud-c"><div id="timer">00:00</div></div>
+    <div class="hud-r"><div class="pts"><small>✓ </small><span id="correct-count">0</span>/2</div></div>
+  </div>
+  <div id="prog-wrap"><div id="prog" style="width:0%"></div></div>
+  <div id="game-area"></div>
+</div>
+
+<div id="s-game2" class="screen hidden">
+  <div id="hud2"></div>
+  <div style="width:100%;height:2px;background:var(--border);"><div style="height:100%;background:var(--accent);width:100%"></div></div>
+  <div class="recyc-wrap">
+    <div class="recyc-title">♻️ Birziklaketa-jolasa · Arrastatu tokira</div>
+    <div class="recyc-sub">Hondakin bakoitza zaborrontzi egokira arrastatu</div>
+    <div class="recyc-score" id="recyc-score">0 / 6 ondo</div>
+    <div class="items-row" id="items-row"></div>
+    <div class="bins-row" id="bins-row"></div>
+    <button class="btn-check" id="btn-check" onclick="checkRecyc()" style="display:none">✓ Egiaztatu</button>
+  </div>
+</div>
+
+<div id="s-win" class="screen hidden">
+  <div class="win-sparks">★✦★✦★</div>
+  <h2 class="win-title">Gela <span>irekita!</span></h2>
+  <div class="code-reveal">
+    <div class="code-label">Zure segurtasun-kodea</div>
+    <div class="code-number" id="win-code">?</div>
+    <div class="code-hint">Idatzi zenbaki hau! Azken pantailan beharko duzu.</div>
+  </div>
+  <div class="time-card"><div class="time-label">Zure denbora</div><div class="time-val" id="win-time">00:00</div></div>
+  <div class="win-stats">
+    <div class="wstat"><div class="wstat-v" id="ws-ok">0</div><div class="wstat-l">Zuzen</div></div>
+    <div class="wstat"><div class="wstat-v" id="ws-err">0</div><div class="wstat-l">Akats</div></div>
+  </div>
+  <div class="saving-msg" id="saving-msg">⏳ Gordeta...</div>
+</div>
+
+<div id="fail">
+  <div style="font-size:3rem">💥</div>
+  <div class="fail-h">Sarraila blokeatu da!</div>
+  <div class="fail-sub">3 akats egin dituzu. Gela osoa berrabiarazi behar da.</div>
+  <div class="fail-btns">
+    <button class="fbtn retry" onclick="retryGame()">↺ Berrabiarazi</button>
+    <button class="fbtn menu" onclick="goIntro()">← Itzuli</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxc81SNB6Bx2xbdOQqI_AnS-UlS5wdvhA_Cv0ZvNDcYYXBKRRgrHZxJCHB-6Xvl1NXL/exec';
+const ROOM_NUMBER=3,ROOM_COLOR='#4ade80';
+
+(function(){const sf=document.getElementById('sf');for(let i=0;i<100;i++){const s=document.createElement('div');s.className='st';const z=Math.random()*2+0.5;s.style.cssText=`width:${z}px;height:${z}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${(Math.random()*4+2).toFixed(1)}s;--dl:${(Math.random()*5).toFixed(1)}s;--op:${(Math.random()*0.5+0.2).toFixed(2)};`;sf.appendChild(s);}})();
+
+const QUESTIONS=[
+  {text:'Zein sektore da munduan CO₂ gehien igortzen duena?',formula:null,options:['Garraioa','Energia elektrikoaren ekoizpena','Nekazaritza','Eraikuntza'],correct:1,explain:'Energia elektrikaren ekoizpena (ikatza, gasa) %25-35.'},
+  {text:'Aluminiozko lata birziklatzeak zenbat energia aurrezten du?',formula:null,options:['%20','%50','%75','%95'],correct:3,explain:'%95 energia aurrezten du aluminioa birziklatzeak!'},
+  {text:'Plastikozko botila batek itsasoan zenbat urte iraungo ditu?',formula:null,options:['10 urte','50 urte','100 urte','450 urte baino gehiago'],correct:3,explain:'450-1000 urte, mikroplastikotan zatituz.'},
+  {text:'Don Boscoko eraikina 2000m² du, panel batek 250W / 10m². Zenbat kW guztira?',formula:'P = (Azalera/Panel-azalera) × W/panel',options:['5 kW','50 kW','500 W','200 kW'],correct:1,explain:'200 panel × 250W = 50.000W = 50kW.'},
+  {text:'Zer da LCA (Life Cycle Assessment) diseinu jasangarrian?',formula:null,options:['Prezio kalkulua','Materialaren eragina ekoizpenetik bukaerara','Birziklagarritasun neurria','Kolore aukeraketa'],correct:1,explain:'Materialaren ingurumen-eragina ekoizpenetik zabortegiraino.'}
+];
+
+// Birziklaketa datuak
+const BINS=[
+  {id:'beira',icon:'🟫',label:'Beira',color:'rgba(34,100,60,0.3)'},
+  {id:'papera',icon:'🔵',label:'Papera/Kartoia',color:'rgba(30,60,120,0.3)'},
+  {id:'plastikoa',icon:'🟡',label:'Plastikoa',color:'rgba(180,150,20,0.3)'},
+  {id:'organikoa',icon:'🟢',label:'Organikoa',color:'rgba(30,120,30,0.3)'}
+];
+const ITEMS=[
+  {text:'Botila hutsa (kristala)',bin:'beira'},
+  {text:'Egunkaria',bin:'papera'},
+  {text:'Sagarra',bin:'organikoa'},
+  {text:'Plastikozko poltsa',bin:'plastikoa'},
+  {text:'Kartoi kutxa',bin:'papera'},
+  {text:'Jogurt ontzia',bin:'plastikoa'}
+];
+
+let qIdx=0,totalErrors=0,correctCount=0,answered=false;
+let timerInt=null,startTime=0,elapsedSec=0,teamName='';
+let currentCorrectIdx=null;
+let binAssign={},dragItem=null;
+
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function fmtTime(s){return Math.floor(s/60).toString().padStart(2,'0')+'m '+(s%60).toString().padStart(2,'0')+'s';}
+function startTimer(){startTime=Date.now()-elapsedSec*1000;timerInt=setInterval(()=>{elapsedSec=Math.floor((Date.now()-startTime)/1000);document.getElementById('timer').textContent=fmtTime(elapsedSec);const t2=document.getElementById('timer2');if(t2)t2.textContent=fmtTime(elapsedSec);},500);}
+function stopTimer(){clearInterval(timerInt);}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');}
+function goIntro(){stopTimer();showScreen('s-intro');document.getElementById('fail').style.display='none';}
+function startGame(){teamName=document.getElementById('team-name').value.trim()||'Taldea';qIdx=0;totalErrors=0;correctCount=0;elapsedSec=0;showScreen('s-game');startTimer();renderQ();}
+function retryGame(){document.getElementById('fail').style.display='none';qIdx=0;correctCount=0;elapsedSec=0;startTimer();renderQ();}
+
+function renderQ(){
+  answered=false;
+  document.getElementById('hud-sub').textContent=`Galdera ${qIdx+1}/5 · ✓ ${correctCount}/2`;
+  document.getElementById('correct-count').textContent=correctCount;
+  document.getElementById('prog').style.width=(qIdx/5*100)+'%';
+    const q=QUESTIONS[qIdx];
+  const ct=q.options[q.correct];
+  const sh=shuffle(q.options.map(t=>({t})));
+  currentCorrectIdx=sh.findIndex(o=>o.t===ct);
+  const fml=q.formula?`<div class="q-formula">${q.formula}</div>`:'';
+  const opts=sh.map((o,i)=>`<button class="q-opt" id="opt${i}" onclick="answer(${i},this)"><span class="ok">${String.fromCharCode(65+i)}</span>${o.t}</button>`).join('');
+  document.getElementById('game-area').innerHTML=`<div class="q-card"><div class="q-header"><div class="q-icon">🌱</div><div><div class="q-meta">Ingurumena</div><div class="q-num">Galdera ${qIdx+1}/3 · Min. 2 zuzen</div></div><div class="q-badge">${correctCount}/2 ✓</div></div><div class="q-text">${q.text}</div>${fml}<div class="q-opts">${opts}</div><div class="q-fb" id="q-fb"></div></div>`;
+}
+
+function answer(idx,btn){
+  if(answered)return;answered=true;
+  const q=QUESTIONS[qIdx];
+  document.querySelectorAll('.q-opt').forEach(b=>b.style.pointerEvents='none');
+  const fb=document.getElementById('q-fb');
+  const r=btn.getBoundingClientRect();
+  if(idx===currentCorrectIdx){
+    btn.classList.add('correct');fb.textContent='✓ '+q.explain;fb.className='q-fb show ok';
+    sparks(r.left+r.width/2,r.top+r.height/2,ROOM_COLOR,10);
+    correctCount++;document.getElementById('correct-count').textContent=correctCount;
+    setTimeout(()=>nextQ(),1400);
+  } else {
+    btn.classList.add('wrong');document.getElementById('opt'+currentCorrectIdx).classList.add('correct');
+    fb.textContent='✗ '+q.explain;fb.className='q-fb show err';
+    sparks(r.left+r.width/2,r.top+r.height/2,'#f43f5e',8);
+    totalErrors++;
+    setTimeout(()=>nextQ(),1800);
+  }
+}
+function nextQ(){ qIdx++; if(correctCount>=2){ startRecyc(); return; } if(qIdx>=5){ stopTimer(); document.getElementById("fail").style.display="flex"; return; } renderQ(); }
+
+function startRecyc(){
+  binAssign={};
+  showScreen('s-game2');
+  document.getElementById('hud2').innerHTML=`<div style="width:100%;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:11px 22px;background:rgba(7,11,15,0.96);border-bottom:1px solid var(--border);backdrop-filter:blur(10px);"><div style="font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--accent);letter-spacing:.14em;text-transform:uppercase;">🌱 Ingurumena · Birziklaketa</div><div id="timer2" style="font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:700;color:var(--accent);text-align:center;">${fmtTime(elapsedSec)}</div><div></div></div>`;
+  document.getElementById('recyc-score').textContent='0 / 6 ondo';
+
+  // Itemak sortu
+  const itemsRow=document.getElementById('items-row');
+  itemsRow.innerHTML='';
+  const shuffled=shuffle(ITEMS.map((it,i)=>({...it,idx:i})));
+  shuffled.forEach(item=>{
+    const el=document.createElement('div');
+    el.className='drag-item';
+    el.draggable=true;
+    el.dataset.idx=item.idx;
+    el.dataset.bin=item.bin;
+    el.textContent=item.text;
+    el.addEventListener('dragstart',e=>{dragItem=el;el.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
+    el.addEventListener('dragend',()=>{el.classList.remove('dragging');dragItem=null;});
+    // Touch support
+    el.addEventListener('touchstart',e=>{dragItem=el;el.style.opacity='.6';},{passive:true});
+    itemsRow.appendChild(el);
+  });
+
+  // Zaborrontziak sortu
+  const binsRow=document.getElementById('bins-row');
+  binsRow.innerHTML='';
+  BINS.forEach(bin=>{
+    const el=document.createElement('div');
+    el.className='bin';
+    el.dataset.binid=bin.id;
+    el.style.background=bin.color;
+    el.innerHTML=`<div class="bin-icon">${bin.icon}</div><div class="bin-label">${bin.label}</div><div class="bin-items" id="bin-items-${bin.id}"></div>`;
+    el.addEventListener('dragover',e=>{e.preventDefault();el.classList.add('dragover');});
+    el.addEventListener('dragleave',()=>el.classList.remove('dragover'));
+    el.addEventListener('drop',e=>{
+      e.preventDefault();el.classList.remove('dragover');
+      if(dragItem){dropItem(dragItem,bin.id);}
+    });
+    // Touch
+    el.addEventListener('touchend',()=>{if(dragItem){dropItem(dragItem,bin.id);dragItem.style.opacity='1';dragItem=null;}});
+    binsRow.appendChild(el);
+  });
+}
+
+function dropItem(itemEl,binId){
+  const itemsRow=document.getElementById('items-row');
+  if(!itemsRow.contains(itemEl))return;
+  itemEl.style.opacity='1';
+  binAssign[itemEl.dataset.idx]={text:itemEl.textContent,correctBin:itemEl.dataset.bin,assignedBin:binId};
+  const binItemsEl=document.getElementById('bin-items-'+binId);
+  const tag=document.createElement('div');
+  tag.className='bin-item';
+  tag.textContent=itemEl.textContent;
+  tag.dataset.idx=itemEl.dataset.idx;
+  binItemsEl.appendChild(tag);
+  itemEl.remove();
+  // Guztiak bota badira, botoia erakutsi
+  if(document.getElementById('items-row').children.length===0){
+    document.getElementById('btn-check').style.display='block';
+  }
+  updateScore();
+}
+
+function updateScore(){
+  const done=Object.keys(binAssign).length;
+  document.getElementById('recyc-score').textContent=done+' / 6 kokatuta';
+}
+
+function checkRecyc(){
+  let ok=0,wrong=0;
+  Object.values(binAssign).forEach(a=>{
+    if(a.assignedBin===a.correctBin)ok++;else wrong++;
+  });
+  // Koloreak erakutsi
+  Object.entries(binAssign).forEach(([idx,a])=>{
+    BINS.forEach(bin=>{
+      const el=document.getElementById('bin-items-'+bin.id);
+      if(el){
+        el.querySelectorAll('.bin-item').forEach(tag=>{
+          if(tag.dataset.idx===idx){
+            tag.classList.add(a.assignedBin===a.correctBin?'ok':'err');
+          }
+        });
+      }
+    });
+  });
+  document.getElementById('recyc-score').textContent=ok+' / 6 zuzen';
+  document.getElementById('btn-check').style.display='none';
+  if(ok>=5){
+    setTimeout(winGame,1200);
+  } else {
+    // Huts egin dutenak itzuli eta berriro saiatu
+    setTimeout(()=>{
+      // Okerrak itzuli
+      Object.entries(binAssign).forEach(([idx,a])=>{
+        if(a.assignedBin!==a.correctBin){
+          const itemsRow=document.getElementById('items-row');
+          const tag=document.querySelector(`.bin-item[data-idx="${idx}"]`);
+          if(tag){
+            const newDrag=document.createElement('div');
+            newDrag.className='drag-item';
+            newDrag.draggable=true;
+            newDrag.dataset.idx=idx;
+            newDrag.dataset.bin=a.correctBin;
+            newDrag.textContent=a.text;
+            newDrag.addEventListener('dragstart',e=>{dragItem=newDrag;newDrag.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
+            newDrag.addEventListener('dragend',()=>{newDrag.classList.remove('dragging');dragItem=null;});
+            newDrag.addEventListener('touchstart',()=>{dragItem=newDrag;newDrag.style.opacity='.6';},{passive:true});
+            itemsRow.appendChild(newDrag);
+            delete binAssign[idx];
+            tag.remove();
+          }
+        }
+      });
+      document.getElementById('recyc-score').textContent=ok+' / 6 ondo — saiatu berriro!';
+      if(document.getElementById('items-row').children.length>0){
+        document.getElementById('btn-check').style.display='none';
+      }
+    },1500);
+  }
+}
+
+function winGame(){
+  stopTimer();showScreen('s-win');
+  document.getElementById('ws-ok').textContent=correctCount;
+  document.getElementById('ws-err').textContent=totalErrors;
+  document.getElementById('win-time').textContent=fmtTime(elapsedSec);
+  for(let i=0;i<4;i++) setTimeout(()=>sparks(Math.random()*window.innerWidth,Math.random()*window.innerHeight*.5,ROOM_COLOR,14),i*250);
+  saveResult();
+}
+async function saveResult(){
+  const msg=document.getElementById('saving-msg');msg.textContent='⏳ Gordeta...';
+  try{const res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({room:ROOM_NUMBER,teamName,seconds:elapsedSec})});const data=await res.json();if(data.ok){document.getElementById('win-code').textContent=data.code;msg.textContent='✓ Gordeta!';sparks(window.innerWidth/2,300,ROOM_COLOR,20);}else msg.textContent='⚠️ Errorea.';}catch(e){msg.textContent='⚠️ Konexio errorea.';}
+}
+function sparks(x,y,color,n=8){for(let i=0;i<n;i++){const el=document.createElement('div');el.className='spk';const sz=Math.random()*8+3,ang=Math.random()*Math.PI*2,d=Math.random()*90+25;el.style.cssText=`width:${sz}px;height:${sz}px;background:${color};left:${x}px;top:${y}px;--tx:${Math.cos(ang)*d}px;--ty:${Math.sin(ang)*d}px;animation-duration:${Math.random()*.4+.5}s;`;document.body.appendChild(el);setTimeout(()=>el.remove(),900);}}
+</script>
+</body>
+</html>
