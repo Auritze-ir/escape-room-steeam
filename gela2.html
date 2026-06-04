@@ -109,6 +109,8 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 .wstat-v{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--accent);}
 .wstat-l{font-size:.68rem;color:var(--muted);margin-top:2px;}
 .saving-msg{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--muted);}
+.btn-restart{margin-top:.5rem;background:transparent;border:2px solid rgba(255,255,255,0.2);color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:.9rem;font-weight:600;padding:12px 32px;border-radius:8px;cursor:pointer;transition:all .2s;letter-spacing:.05em;text-transform:uppercase;}
+.btn-restart:hover{border-color:rgba(255,255,255,0.5);color:var(--text);}
 .spk{position:fixed;pointer-events:none;z-index:400;border-radius:50%;animation:spka .7s ease-out forwards;}
 @keyframes spka{0%{opacity:1;transform:translate(0,0)scale(1);}100%{opacity:0;transform:translate(var(--tx),var(--ty))scale(0);}}
 </style>
@@ -175,6 +177,7 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
     <div class="wstat"><div class="wstat-v" id="ws-err">0</div><div class="wstat-l">Akats</div></div>
   </div>
   <div class="saving-msg" id="saving-msg">⏳ Gordeta...</div>
+  <button class="btn-restart" onclick="location.reload()">↺ Berriro hasi</button>
 </div>
 
 <div id="fail">
@@ -196,7 +199,7 @@ const ROOM_NUMBER=2, ROOM_COLOR='#a855f7';
 
 const QUESTIONS=[
   {text:'Marie Curie bi Nobel sari irabazi zituen lehen pertsona. Zein diziplinatan?',formula:null,options:['Fisika eta Kimika','Kimika eta Medikuntza','Fisika eta Matematika','Biologia eta Fisika'],correct:0,explain:'Fisika (1903) eta Kimika (1911).'},
-  {text:'Hedy Lamarr-ek zein teknologiaren oinarria patentatu zuen 1942an?',formula:null,options:['Telefono mugikorra','Frekuentzia-jauziko komunikazioa (WiFi/Bluetooth)','Ordenagailuen prozesadorea','Laser teknologia'],correct:1,explain:'Frekuentzia-jauzkoa — gaur eguneko WiFi eta Bluetooth-aren oinarria.'},
+  {text:'Hedy Lamarr-ek zein teknologiaren oinarria patentatu zuen 1942an?',formula:null,options:['Telefono mugikorra','Frekuentzia-jauzko komunikazioa (WiFi/Bluetooth)','Ordenagailuen prozesadorea','Laser teknologia'],correct:1,explain:'Frekuentzia-jauzkoa — gaur eguneko WiFi eta Bluetooth-aren oinarria.'},
   {text:'Katherine Johnson-en kalkuluak zein NASA misiotan izan ziren erabakigarriak?',formula:null,options:['Hubble teleskopioa','Voyager 1','Apollo 11','ISS eraikipen-misioa'],correct:2,explain:'Apollo 11 Ilargiaren misioan (1969).'},
   {text:'Rosalind Franklin-en "Foto 51" argazkiak zer frogatu zuen?',formula:null,options:['DNAren sekuentzia','Proteinen egitura','DNA helize bikoitza','RNAren aurkikuntza'],correct:2,explain:'DNA helize bikoitzaren egitura.'},
   {text:'Ada Lovelacek zein makinarentzat idatzi zuen lehen algoritmo konputazionala?',formula:null,options:['ENIAC','Difference Engine','Analytical Engine','Mark I'],correct:2,explain:'Charles Babbage-ren Analytical Engine-rentzat, 1842an.'}

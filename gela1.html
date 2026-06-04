@@ -134,6 +134,8 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 .wstat-v{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--accent);}
 .wstat-l{font-size:.68rem;color:var(--muted);margin-top:2px;}
 .saving-msg{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--muted);letter-spacing:.1em;}
+.btn-restart{margin-top:.5rem;background:transparent;border:2px solid rgba(255,255,255,0.2);color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:.9rem;font-weight:600;padding:12px 32px;border-radius:8px;cursor:pointer;transition:all .2s;letter-spacing:.05em;text-transform:uppercase;}
+.btn-restart:hover{border-color:rgba(255,255,255,0.5);color:var(--text);}
 .spk{position:fixed;pointer-events:none;z-index:400;border-radius:50%;animation:spka .7s ease-out forwards;}
 @keyframes spka{0%{opacity:1;transform:translate(0,0)scale(1);}100%{opacity:0;transform:translate(var(--tx),var(--ty))scale(0);}}
 @keyframes shake2{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
@@ -230,6 +232,7 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
     <div class="wstat"><div class="wstat-v" id="ws-err">0</div><div class="wstat-l">Akats</div></div>
   </div>
   <div class="saving-msg" id="saving-msg">⏳ Gordeta...</div>
+  <button class="btn-restart" onclick="location.reload()">↺ Berriro hasi</button>
 </div>
 
 <!-- FAIL -->
