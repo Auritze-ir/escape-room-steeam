@@ -363,7 +363,11 @@ async function runRobot(){
     else if(cmd==='➡️') nr[1]++;
     // Mugak egiaztatu
     if(nr[0]<0||nr[0]>=GRID||nr[1]<0||nr[1]>=GRID||mapData.grid[nr[0]][nr[1]]===1){
-      document.getElementById('seq-msg').textContent='💥 Hormarekin talka! Berriro saiatu.';
+      document.getElementById('seq-msg').textContent='💥 Hormarekin talka!';
+      setTimeout(()=>{
+        placeRobot(canvas, [...mapData.start], cell);
+        document.getElementById('seq-msg').textContent='🔄 Robota hasierara itzuli da. Saiatu berriro!';
+      }, 800);
       running=false;return;
     }
     pos=nr;
@@ -375,7 +379,12 @@ async function runRobot(){
     sparks(window.innerWidth/2,window.innerHeight*.4,ROOM_COLOR,16);
     setTimeout(winGame,1000);
   } else {
-    document.getElementById('seq-msg').textContent='Oraindik ez duzu helburura iritsi. Saiatu berriro!';
+    document.getElementById('seq-msg').textContent='Oraindik ez duzue helburura iritsi. Saiatu berriro!';
+    // Robota hasierako posiziora itzuli
+    setTimeout(()=>{
+      placeRobot(canvas, [...mapData.start], cell);
+      document.getElementById('seq-msg').textContent='🔄 Robota hasierara itzuli da. Saiatu berriro!';
+    }, 800);
   }
   running=false;
 }
