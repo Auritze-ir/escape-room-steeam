@@ -147,7 +147,7 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 <div id="s-intro" class="screen">
   <div class="room-badge">XIII dbSariak · 2026 · Gela 1 / 4</div>
   <h1 class="room-title">📐 <span>Matematika</span><br>Laborategia</h1>
-  <div class="room-desc"><strong>⚠️ Kodea blokeatu da.</strong> Matematikako 3 galderari erantzun eta gero <strong>kalkulagailu-erronka</strong> gainditu behar duzu kodea lortzeko. Denbora kontatzen hasten da "Hasi" sakatzean.</div>
+  <div class="room-desc"><strong>⚠️ Kodea blokeatu da.</strong> Matematikako galderak erantzun eta gero <strong>kalkulagailu-erronka</strong> gainditu behar duzue kodea lortzeko. <strong>2 galdera ondo</strong> erantzun behar dituzue (gehienez 5). Denbora kontatzen hasten da "Hasi" sakatzean.</div>
   <div class="rules-row">
     <div class="rule-chip"><span>📝</span> <strong>5 galdera max.</strong></div>
     <div class="rule-chip"><span>🧮</span> <strong>Kalkulagailu-jolasa</strong></div>
@@ -155,7 +155,7 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
     <div class="rule-chip"><span>⏱️</span> <strong>Denbora kontatzen</strong></div>
   </div>
   <div class="name-form">
-    <label class="name-label">Taldearen izena (aukerakoa):</label>
+    <label class="name-label">Taldearen izena:</label>
     <input class="name-input" id="team-name" type="text" placeholder="Adib: Talde Gorria" maxlength="30">
   </div>
   <button class="btn-start" onclick="startGame()">▶ Hasi</button>
@@ -165,7 +165,7 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 <div id="s-game" class="screen hidden">
   <div id="hud">
     <div class="hud-l">
-      <div><div class="hud-room">📐 Matematika</div><div class="hud-sub" id="hud-sub">Galdera 1/5 · ✓ 0/2</div></div>
+      <div><div class="hud-room">📐 Matematika</div><div class="hud-sub" id="hud-sub">Galdera 1 · ✓ 0/2</div></div>
       
     </div>
     <div class="hud-c"><div id="timer">00:00</div></div>
@@ -219,7 +219,7 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
   <div class="code-reveal">
     <div class="code-label">Zure segurtasun-kodea</div>
     <div class="code-number" id="win-code">?</div>
-    <div class="code-hint">Idatzi zenbaki hau! Azken pantailan beharko duzu.</div>
+    <div class="code-hint">Idatzi zenbaki hau! Azken pantailan beharko duzue.</div>
   </div>
   <div class="time-card">
     <div class="time-label">Zure denbora</div>
@@ -236,7 +236,7 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 <div id="fail">
   <div style="font-size:3rem">💥</div>
   <div class="fail-h">Sarraila blokeatu da!</div>
-  <div class="fail-sub">3 akats egin dituzu. Gela osoa berrabiarazi behar da.</div>
+  <div class="fail-sub">3 akats egin duzue. Gela osoa berrabiarazi behar da.</div>
   <div class="fail-btns">
     <button class="fbtn retry" onclick="retryGame()">↺ Berrabiarazi</button>
     <button class="fbtn menu" onclick="goIntro()">← Itzuli</button>
