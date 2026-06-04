@@ -653,7 +653,33 @@ async function saveTeamResult(){
       method: 'POST',
       body: JSON.stringify({ action: 'saveTeam', teamName: name, totalTime: time })
     });
+    // Sheet garbitu da — lastData eta UI berreraiki
+    lastData = { rooms: [null,null,null,null], complete: false };
+    renderRooms(lastData);
+    resetLockPanel();
   } catch(e){ console.log('Ezin gorde:', e); }
+}
+
+function resetLockPanel(){
+  // Sloteak garbitu
+  [1,2,3,4].forEach(i=>{
+    slotValues[i] = null;
+    const box = document.getElementById('slot-'+i);
+    if(box){ box.textContent=''; box.className='slot-box'; }
+  });
+  // Bankua berreraiki
+  updateBank();
+  // Izena garbitu
+  const inp = document.getElementById('team-name');
+  if(inp) inp.value = '';
+  // Denbora garbitu
+  const tt = document.getElementById('team-total-time');
+  if(tt) tt.textContent = '--:--';
+  // Emaitza ezkutatu
+  const res = document.getElementById('lock-result');
+  if(res) res.classList.remove('show');
+  // Teklatu ezkutatu
+  closeVkb();
 }
 
 // ── RANKING ──
