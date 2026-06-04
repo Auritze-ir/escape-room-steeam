@@ -67,22 +67,22 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 
 /* ═══ JOLAS 3: BIRZIKLAKETA DRAG & DROP ═══ */
 #s-game2{justify-content:flex-start;padding:0;}
-.recyc-wrap{flex:1;width:100%;display:flex;flex-direction:column;align-items:center;padding:16px 14px;gap:14px;overflow-y:auto;}
+.recyc-wrap{flex:1;width:100%;display:flex;flex-direction:column;align-items:center;padding:16px 14px;gap:18px;overflow-y:auto;}
 .recyc-title{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;text-align:center;}
 .recyc-sub{font-size:.85rem;color:var(--muted);text-align:center;}
 .recyc-score{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--accent);}
-.items-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:560px;min-height:50px;padding:8px;background:rgba(255,255,255,0.03);border:1px dashed var(--border);border-radius:12px;width:100%;}
-.drag-item{background:rgba(255,255,255,0.07);border:1.5px solid var(--border);border-radius:8px;padding:8px 14px;font-size:.88rem;cursor:grab;transition:all .2s;user-select:none;white-space:nowrap;}
+.items-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:680px;min-height:60px;padding:12px;background:rgba(255,255,255,0.03);border:1px dashed var(--border);border-radius:14px;width:100%;}
+.drag-item{background:rgba(255,255,255,0.07);border:1.5px solid var(--border);border-radius:10px;padding:12px 20px;font-size:1rem;font-weight:500;cursor:grab;transition:all .2s;user-select:none;white-space:nowrap;}
 .drag-item:active{cursor:grabbing;opacity:.7;}
 .drag-item.dragging{opacity:.5;transform:scale(.95);}
-.bins-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:560px;width:100%;}
-@media(min-width:500px){.bins-row{grid-template-columns:repeat(4,1fr);}}
-.bin{background:rgba(255,255,255,0.04);border:2px dashed var(--border);border-radius:14px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;min-height:110px;transition:border-color .2s;}
+.bins-row{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:680px;width:100%;}
+@media(min-width:600px){.bins-row{grid-template-columns:repeat(4,1fr);}}
+.bin{background:rgba(255,255,255,0.04);border:2px dashed var(--border);border-radius:16px;padding:16px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;min-height:140px;transition:border-color .2s;}
 .bin.dragover{border-color:var(--accent);background:rgba(74,222,128,0.07);}
-.bin-icon{font-size:1.8rem;}
-.bin-label{font-size:.72rem;text-align:center;color:var(--muted);font-weight:600;letter-spacing:.04em;}
+.bin-icon{font-size:2.4rem;}
+.bin-label{font-size:.82rem;text-align:center;color:var(--muted);font-weight:600;letter-spacing:.03em;}
 .bin-items{display:flex;flex-direction:column;gap:3px;width:100%;}
-.bin-item{font-size:.72rem;padding:3px 6px;border-radius:5px;text-align:center;}
+.bin-item{font-size:.78rem;padding:5px 8px;border-radius:6px;text-align:center;}
 .bin-item.ok{background:rgba(74,222,128,0.15);color:var(--ok);}
 .bin-item.err{background:rgba(244,63,94,0.12);color:#f87171;}
 .btn-check{background:var(--accent);color:#030a04;border:none;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:700;padding:13px 36px;border-radius:8px;transition:transform .15s;}
