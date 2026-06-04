@@ -256,7 +256,7 @@ function answer(idx,btn){
   }
 }
 
-function nextQ(){ qIdx++; if(correctCount>=2){ startMem(); return; } if(qIdx>=5){ stopTimer(); document.getElementById("fail").style.display="flex"; return; } renderQ(); }
+function nextQ(){ qIdx++; if(correctCount>=2){ startMem(); return; } if(qIdx>=5){ for(let i=QUESTIONS.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[QUESTIONS[i],QUESTIONS[j]]=[QUESTIONS[j],QUESTIONS[i]];} qIdx=0; } renderQ(); }
 
 function startMem(){
   memFlipped=[];memMatched=0;memBlocked=false;

@@ -296,13 +296,13 @@ function goIntro(){stopTimer();showScreen('s-intro');document.getElementById('fa
 function startGame(){
   teamName='Taldea';
   qIdx=0;totalErrors=0;correctCount=0;elapsedSec=0;
-  shuffle(QUESTIONS);
+  for(let i=QUESTIONS.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[QUESTIONS[i],QUESTIONS[j]]=[QUESTIONS[j],QUESTIONS[i]];}
   showScreen('s-game');startTimer();renderQ();
 }
 function retryGame(){
   document.getElementById('fail').style.display='none';
   qIdx=0;correctCount=0;elapsedSec=0;
-  shuffle(QUESTIONS);
+  for(let i=QUESTIONS.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[QUESTIONS[i],QUESTIONS[j]]=[QUESTIONS[j],QUESTIONS[i]];}
   startTimer();renderQ();
 }
 
@@ -352,7 +352,7 @@ function answer(idx,btn){
   }
 }
 
-function nextQ(){ qIdx++; if(correctCount>=2){ startCalc(); return; } if(qIdx>=5){ shuffle(QUESTIONS); qIdx=0; } renderQ(); }
+function nextQ(){ qIdx++; if(correctCount>=2){ startCalc(); return; } if(qIdx>=5){ for(let i=QUESTIONS.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[QUESTIONS[i],QUESTIONS[j]]=[QUESTIONS[j],QUESTIONS[i]];} qIdx=0; } renderQ(); }
 
 function startCalc(){
   calcOps=genOps();calcIdx=0;calcDone=0;calcInput='';calcBlocked=false;
