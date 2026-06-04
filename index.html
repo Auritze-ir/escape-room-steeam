@@ -110,6 +110,15 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 
 @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
 
+.team-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end;max-width:420px;margin:0 auto 1.2rem;}
+.team-field{display:flex;flex-direction:column;gap:6px;}
+.team-label{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.team-input{background:rgba(255,255,255,0.06);border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;font-family:'Space Grotesk',sans-serif;font-size:.95rem;color:var(--text);outline:none;transition:border-color .2s;}
+.team-input:focus{border-color:rgba(255,255,255,0.3);}
+.team-input::placeholder{color:var(--muted);}
+.team-time-box{text-align:center;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:10px 16px;}
+.team-time-lbl{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.team-time-val{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:700;color:#4ac9e8;}
 .btn-unlock{display:block;width:100%;max-width:320px;margin:0 auto 1.5rem;background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.15);color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;padding:15px;border-radius:10px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:all .2s;}
 .btn-unlock:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.3);}
 
@@ -242,6 +251,18 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
       </div>
     </div>
 
+    <!-- Taldearen izena eta denbora totala -->
+    <div class="team-row">
+      <div class="team-field">
+        <label class="team-label">Taldearen izena</label>
+        <input class="team-input" id="team-name" type="text" placeholder="Adib: Talde Gorria" maxlength="30">
+      </div>
+      <div class="team-time-box">
+        <div class="team-time-lbl">Denbora totala</div>
+        <div class="team-time-val" id="team-total-time">--:--</div>
+      </div>
+    </div>
+
     <button class="btn-unlock" onclick="tryUnlock()">🔓 Kandadua ireki</button>
 
     <div class="lock-result" id="lock-result">
@@ -350,12 +371,15 @@ function renderRooms(data){
   });
 
   const tv=document.getElementById('total-val');
+  const tt=document.getElementById('team-total-time');
   if(data.complete && data.totalTime){
     tv.textContent=data.totalTime;
     tv.className='total-val';
+    if(tt) tt.textContent=data.totalTime;
   } else {
     tv.textContent='--:--';
     tv.className='total-val wait';
+    if(tt) tt.textContent='--:--';
   }
 }
 
@@ -515,6 +539,7 @@ function tryUnlock(){
     document.getElementById('lr-time').textContent = lastData.totalTime||'';
     sparks(window.innerWidth/2, window.innerHeight/2, '#4ade80', 20);
     setTimeout(()=>sparks(window.innerWidth/2, window.innerHeight/2, '#e8c44a', 16), 300);
+    saveTeamResult();
   } else {
     result.className = 'lock-result show fail';
     document.getElementById('lr-icon').textContent = '🔒';
@@ -545,6 +570,18 @@ function sparks(x,y,color,n=10){
 
 // Hasi
 loadResults();
+// ── GORDE TALDEA ──
+async function saveTeamResult(){
+  const name = document.getElementById('team-name')?.value.trim() || 'Taldea';
+  const time = lastData?.totalTime || '--';
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'saveTeam', teamName: name, totalTime: time })
+    });
+  } catch(e){ console.log('Ezin gorde:', e); }
+}
+
 // ── RANKING ──
 const RANKING_SHEET = 'Emaitzak';
 
