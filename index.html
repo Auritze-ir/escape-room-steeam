@@ -280,10 +280,14 @@ function renderRooms(data){
     const teEl=document.getElementById('te'+n);
     const card=document.getElementById('card-'+n);
     if(r){
-      tmEl.textContent=r.time||'--';
+      // segundoak berrerabili — nabigatzaileak data gisa ez interpretatzeko
+      const secs = parseInt(r.seconds) || 0;
+      const mm = Math.floor(secs/60).toString().padStart(2,'0');
+      const ss = (secs%60).toString().padStart(2,'0');
+      tmEl.textContent = secs > 0 ? mm+'m '+ss+'s' : String(r.time||'--');
       tmEl.className='rc-time';
       stEl.textContent='✅';
-      teEl.textContent=r.teamName||'';
+      teEl.textContent=String(r.teamName||'');
       card.classList.add('done');
     } else {
       tmEl.textContent='--:--';
