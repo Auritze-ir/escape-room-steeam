@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XIII dbSariak · STEEAM Escape Room (English) · Don Bosco LHII</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
+:root{
+  --bg:#070b0f;--surface:#0c1318;--border:rgba(255,255,255,0.08);
+  --text:#e8edf5;--muted:rgba(232,237,245,0.55);
+  --main:#4ac9e8;--c1:#e8c44a;--c2:#a855f7;--c3:#4ade80;--c4:#f97316;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+#sf{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.st{position:absolute;border-radius:50%;background:#fff;opacity:0;animation:tw var(--d,3s) var(--dl,0s) ease-in-out infinite;}
+@keyframes tw{0%,100%{opacity:0;}50%{opacity:var(--op,.5);}}
+@media (prefers-reduced-motion:reduce){.st{animation:none;opacity:.3;}}
+
+.wrap{position:relative;z-index:2;max-width:760px;margin:0 auto;padding:3rem 1.5rem 4rem;}
+.header{text-align:center;margin-bottom:2.5rem;}
+.ev-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--main);letter-spacing:.2em;text-transform:uppercase;border:1px solid rgba(74,201,232,0.3);padding:5px 16px;border-radius:99px;background:rgba(74,201,232,0.06);margin-bottom:1rem;}
+.ev-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:700;color:#fff;line-height:1.1;margin-bottom:.6rem;}
+.ev-title span{color:var(--main);font-style:italic;}
+.ev-sub{font-size:.95rem;color:var(--muted);line-height:1.6;}
+
+a{color:inherit;text-decoration:none;}
+a:focus-visible{outline:2px solid #fff;outline-offset:3px;}
+
+.main-link{display:flex;align-items:center;gap:18px;background:var(--surface);border:1.5px solid rgba(74,201,232,0.35);border-radius:16px;padding:22px 24px;margin-bottom:14px;transition:border-color .2s,transform .15s;}
+.main-link:hover{border-color:var(--main);transform:translateY(-2px);}
+.main-icon{font-size:2rem;}
+.main-name{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#fff;}
+.main-desc{font-size:.88rem;color:var(--muted);margin-top:2px;}
+.go{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:1.2rem;color:var(--rc,var(--main));}
+
+.rooms{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+@media(max-width:520px){.rooms{grid-template-columns:1fr;}}
+.room{display:flex;flex-direction:column;gap:6px;background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--rc);border-radius:14px;padding:18px 20px;transition:border-color .2s,transform .15s;}
+.room:hover{border-color:var(--rc);transform:translateY(-2px);}
+.room-top{display:flex;align-items:center;justify-content:space-between;}
+.room-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--rc);}
+.room-name{font-size:1.15rem;font-weight:700;color:#fff;}
+.room-game{font-size:.85rem;color:var(--muted);}
+
+</style>
+</head>
+<body>
+<div id="sf"></div>
+
+<div class="wrap">
+  <div class="header">
+    <div class="ev-badge">XIII dbSariak · CIFP Don Bosco LHII · 2026</div>
+    <h1 class="ev-title">STEEAM <span>Escape Room</span></h1>
+    <p class="ev-sub">Open the main screen on the shared display, and each room on its own device.</p>
+  </div>
+
+  <a class="main-link" href="scoreboard.html">
+    <div class="main-icon">🖥️</div>
+    <div>
+      <div class="main-name">Main screen</div>
+      <div class="main-desc">Times, final lock and ranking</div>
+    </div>
+    <div class="go">›</div>
+  </a>
+
+  <div class="rooms">
+    <a class="room" href="room1.html" style="--rc:var(--c1)">
+      <div class="room-top"><span class="room-num">Room 1</span><span class="go">›</span></div>
+      <div class="room-name">📐 Mathematics</div>
+      <div class="room-game">Calculator challenge</div>
+    </a>
+    <a class="room" href="room2.html" style="--rc:var(--c2)">
+      <div class="room-top"><span class="room-num">Room 2</span><span class="go">›</span></div>
+      <div class="room-name">⚗️ Women in Science</div>
+      <div class="room-game">Memory game</div>
+    </a>
+    <a class="room" href="room3.html" style="--rc:var(--c3)">
+      <div class="room-top"><span class="room-num">Room 3</span><span class="go">›</span></div>
+      <div class="room-name">🌱 Environment</div>
+      <div class="room-game">Recycling game</div>
+    </a>
+    <a class="room" href="room4.html" style="--rc:var(--c4)">
+      <div class="room-top"><span class="room-num">Room 4</span><span class="go">›</span></div>
+      <div class="room-name">🤖 Robotics</div>
+      <div class="room-game">Robot programming</div>
+    </a>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const sf=document.getElementById('sf');
+  for(let i=0;i<100;i++){
+    const s=document.createElement('div');s.className='st';
+    const z=Math.random()*2+0.5;
+    s.style.cssText=`width:${z}px;height:${z}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${(Math.random()*4+2).toFixed(1)}s;--dl:${(Math.random()*5).toFixed(1)}s;--op:${(Math.random()*0.5+0.2).toFixed(2)};`;
+    sf.appendChild(s);
+  }
+})();
+</script>
+</body>
+</html>
